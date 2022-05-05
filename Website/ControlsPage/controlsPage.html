@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Controls Page</title>
+    <link href="controlsPage.css" rel="stylesheet">
+    <script src="controlsPage.js?t=42523"></script>
+    <script src="../Javascript/APICalls/All.js?t=45235"></script>
+</head>
+<body onload="startControls()">
+    <div>
+        <div class="headerContainer" style="margin-left:5%">Current Environment</div>
+        <div class="headerContainer" style="margin-left:2.5%">Lighting Controls</div>
+        <div class="headerContainer" style="margin-left:2%">Water Controls</div>
+        <div class="itemContainer" style="margin-left:5%;  height: 500px; overflow: auto">
+            <h1 id="tempHeaderControl">Temperature: </h1>
+            <h1 id="humidHeaderControl">Humidity: </h1>
+            <h1 id="pump1HeaderControl">Water Status: </h1>
+            <h1 id="light1HeaderControl">Lights Status: </h1>
+            <h1 id="dailyWaterControl">Water Schedule: </h1>
+            <h1 id="dailyLightControl">Light Schedule: </h1>
+        </div>
+        <div class="itemContainer" style="margin-left:2%; overflow: auto">
+            <h2 style="float:left; margin-left: 2%; width:90%;text-decoration: underline">Set a Timer For The Lights</h2>
+            <p style="font-size: 28px;float: left; margin-left: 2%; margin-bottom: 5%;" id="light1HoursDaily">Hours per day: 0</p>
+            <div style="margin-left: 8%;margin-top: 2.5%; padding: 12px 8px; float: left; width: 80px; border-radius: 10%;">
+                <button class = "buttonPM" onclick="decreaseDailyHours()">-</button>
+                <button class = "buttonPM" onclick="increaseDailyHours()">+</button>
+            </div>
+            <div style="float:left; width: 50%; padding: 0; margin-right: 40%; margin-bottom: 3%;">
+                <button class="buttonPMA" onclick="submitDailyLightHours()" style="float: left;width: 50%; border-radius: 10%">Submit</button>
+                <h2 id="successSubmitLight" style="float:left; width: 80%; margin-left: 15%;"></h2>
+            </div>
+        </div>
+
+        <div class="itemContainer" style="margin-left:2%; overflow: auto;">
+            <h2 style="float:left; margin-left: 2%; width:90%;text-decoration: underline; height: 5px;">Set a Timer For Plant Watering</h2>
+
+            <div style="margin-left: 2%; float: left; width: 90%;height: 60px;">
+                <p style="font-size: 28px;float: left;" id="waterTimerInterval">Supply every 0 hours</p><br>
+                <button class = "buttonPM" onclick="decreaseDailyHoursWater()" style="margin-top: 2%; margin-left: 30.5%;">-</button>
+                <button class = "buttonPM" onclick="increaseDailyHoursWater()" style="margin-top: 2%; margin-left: 3.5%">+</button>
+            </div>
+
+            <div style="margin-left: 2%; float: left; width: 90%;">
+                <p style="font-size: 28px;float: left;" id="waterSecondsInterval">Amount of water supplied: 0ml</p><br>
+                <button class = "buttonPM" onclick="decreaseWaterSeconds()" style="margin-top: 2%">-</button>
+                <button class = "buttonPM" onclick="increaseWaterSeconds()" style="margin-top: 2%">+</button>
+            </div>
+
+            <div style="float:left; width: 50%; padding: 0; margin-right: 40%; margin-bottom: 3%;">
+                <button class="buttonPMA" onclick="submitWaterStuff()" style="float: left;width: 50%; border-radius: 10%">Submit</button>
+                <h2 id="successSubmitWater" style="float:left; width: 30%; margin-left: 15%;"></h2>
+            </div>
+        </div>
+
+        <div class="itemContainer" style="margin-top: 10px;margin-left:2%; width:30%; overflow: auto">
+            <h2 style="text-decoration: underline; font-weight: bold; position: relative; left: 4%;">Manual Overrides: </h2>
+
+            <div style="float: left;width: 42%; margin-left: 4%;">
+                <h2 style="float: left;">Toggle Lights: </h2>
+                <label class="switch" style="float: left; margin-left: 5%; margin-top: 6%;">
+                  <input type="checkbox" id="lights1Toggle">
+                  <span class="slider round"></span>
+                </label>
+            </div>
+
+            <div style="float: left; width: 42%; margin-left: 5%;">
+                <h2 style="float: left;">Toggle Water: </h2>
+                <label class="switch" style="float: left; margin-left: 5%; margin-top: 6%;">
+                  <input type="checkbox" id="nozzle1Toggle">
+                  <span class="slider round"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
