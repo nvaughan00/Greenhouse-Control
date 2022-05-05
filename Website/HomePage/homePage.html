@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="homePage.css" rel="stylesheet">
+    <script src="homePage.js?t=123123"></script>
+    <script src="../Javascript/APICalls/All.js?t=3123123123"></script>
+    <title>Home</title>
+</head>
+<body onload="getData()">
+    <div class="data">
+        <h3 style="font-size: 28px; text-decoration: underline;">Plant Stats</h3>
+            <div class="columnHeaders">Name: </div>
+            <div class="columns" id = "plantName"></div>
+
+            <div class="columnHeaders">Plant Type: </div>
+            <div class="columns" id = "plantType"></div>
+
+            <div class="columnHeaders">Current Temperature: </div>
+            <div class="columns" id = "temperature"></div>
+
+            <div class="columnHeaders">Current Humidity: </div>
+            <div class="columns" id = "humidity"></div>
+
+            <div class="columnHeaders">Recommended Water Cycle: </div>
+            <div class="columns" id = "waterCycle"></div>
+
+            <div class="columnHeaders">Recommended Light Cycle: </div>
+            <div class="columns" id = "lightCycle"></div>
+    </div>
+
+    <div class="plants">
+        <h3 style="font-size: 28px; text-decoration: underline;">Plants</h3>
+        <div class="plantsItems" id = "plant1Div">Tomato</div>
+        <div class="plantsItems" id = "plant2Div">Basil</div>
+        <div class="plantsItems" id = "plant3Div">Rosemary</div>
+        <div class="plantsItems" id = "plant4Div">Lettuce</div>
+    </div>
+</body>
+</html>
