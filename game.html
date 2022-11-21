@@ -13,7 +13,6 @@
             exp: 0
         };
         let canStartGame = false;
-        let canSpawnUnit = true;
         let selectedLane = 1;
         let isPlayingGame = false;
         let spawnInterval = undefined;
@@ -84,28 +83,35 @@
                 defence: "123",
                 special: "sadness",
                 upgradeLevel: "1",
-                id: 0
+                id: 0,
+                cooldown: 500
             },
             {
                 name: "TestGuy123",
                 attack: "10",
                 defence: "123",
                 special: "sadnesvvv",
-                upgradeLevel: "1"
+                upgradeLevel: "1",
+                id: 1,
+                cooldown: 600
             },
             {
                 name: "TestGuysdfdfgs",
                 attack: "10w13",
                 defence: "123a",
                 special: "sadness12",
-                upgradeLevel: "1"
+                upgradeLevel: "1",
+                id: 2,
+                cooldown: 1000
             },
             {
                 name: "TestGuy123",
                 attack: "10",
                 defence: "123",
                 special: "sadnesvvv",
-                upgradeLevel: "1"
+                upgradeLevel: "1",
+                id: 3,
+                cooldown: 100
             },
             {
                 name: "TestGuysdfdfgs",
@@ -309,19 +315,22 @@
                 unitName: "",
                 slot: "unit1",
                 timeout: 500,
-                unitId: 0
+                unitId: 0,
+                canSpawn: true
             },
             {
                 unitName: "",
                 slot: "unit2",
                 timeout: 500,
-                unitId: 0
+                unitId: 0,
+                canSpawn: true
             },
             {
                 unitName: "",
                 slot: "unit3",
                 timeout: 500,
-                unitId: 0
+                unitId: 0,
+                canSpawn: true
             },
             {
                 unitName: "",
@@ -355,7 +364,6 @@
             }
         ]
 
-
         function capitalizeWords() {
             for(let i = 0; i < nouns.length; i++) {
                 let newWord = nouns[i].charAt(0).toUpperCase() + nouns[i].slice(1);
@@ -378,22 +386,25 @@
                 document.getElementById(id).style.backgroundColor = "darkgray";
 
                 if(currentTab === "Battle") {
-                    let found = activeUnitList.find(x => x.slot === id)
+                    let found = activeUnitList.find(j => j.slot === id)
 
-                    if(document.getElementById(id).getAnimations().length === 0) {
-                        document.getElementById(id).style.animation = "unitDivAnimate 0.5s ease";
-                        setTimeout(() => {
-                                document.getElementById(id).style.animation = "";
-                                canSpawnUnit = true;
-                            },
-                            found.timeout
-                        );
-                        createGuyUnit(selectedLane, "right", 2, found.unitId);
-                        canSpawnUnit = false;
+                    if (found.unitId !== -1 && found.canSpawn) {
+                        if (document.getElementById(id).getAnimations().length === 0) {
+                            document.getElementById(id).style.animation = "unitDivAnimate 0.5s ease";
+                            found.canSpawn = false;
+                            setTimeout(() => 
+                                {
+                                    document.getElementById(id).style.animation = "";
+                                    found.canSpawn = true;
+                                }
+                                ,found.timeout
+                            );
+                            createGuyUnit(selectedLane, "right", 2, found.unitId);
+                        }
                     }
                 }
             }
-            else if(mouseState === "ClickEnd") {
+            else if (mouseState === "ClickEnd") {
                 document.getElementById(id).style.backgroundColor = "lightgray";
             }
             else {
@@ -459,21 +470,27 @@
         }
 
         function initUnitBar() {
-            drawGuy(document.getElementById("unit1Canvas"), 0);
+            for(let i = 1; i < 9; i++) {
+                drawGuy(document.getElementById("unit" + i + "Canvas"), activeUnitList[i-1].unitId);
+            }
         }
 
         async function clearStartMenuAndShowMainWindow() {
-            document.getElementById("newGameButton").style.visibility = "hidden";
-            document.getElementById("loadGameButton").style.visibility = "hidden";
-            document.getElementById("mainGameWindow").style.visibility = "visible";
-            document.getElementById("loadGameWindow").style.visibility = "hidden";
-            document.getElementById("mainTitle").style.visibility = "hidden";
+            setMainMenuVisibilities("hidden", "hidden", "visible", "hidden", "hidden");
             disableStartButton();
             selectedLane = 1;
             capitalizeWords();
             generateEnemyMapPositions();
             showTab('Map');
             initUnitBar();
+        }
+
+        function setMainMenuVisibilities(newGameButton, loadGameButton, mainGameWindow, loadGameWindow, mainTitle) {
+            document.getElementById("newGameButton").style.visibility = newGameButton;
+            document.getElementById("loadGameButton").style.visibility = loadGameButton;
+            document.getElementById("mainGameWindow").style.visibility = mainGameWindow;
+            document.getElementById("loadGameWindow").style.visibility = loadGameWindow;
+            document.getElementById("mainTitle").style.visibility = mainTitle;
         }
         
         function waveChargeBar(chargeSpeed) {
@@ -487,21 +504,13 @@
         }
 
         function clearStartMenuAndShowLoadWindow() {
-            document.getElementById("newGameButton").style.visibility = "hidden";
-            document.getElementById("loadGameButton").style.visibility = "hidden";
-            document.getElementById("mainGameWindow").style.visibility = "hidden";
-            document.getElementById("loadGameWindow").style.visibility = "visible";
-            document.getElementById("mainTitle").style.visibility = "hidden";
+            setMainMenuVisibilities("hidden", "hidden", "hidden", "visible", "hidden");
             disableStartButton();
             clearInterval(spawnInterval);
         }
 
         function showStartMenu() {
-            document.getElementById("newGameButton").style.visibility = "visible";
-            document.getElementById("loadGameButton").style.visibility = "visible";
-            document.getElementById("mainGameWindow").style.visibility = "hidden";
-            document.getElementById("loadGameWindow").style.visibility = "hidden";
-            document.getElementById("mainTitle").style.visibility = "visible";
+            setMainMenuVisibilities("visible", "visible", "hidden", "hidden", "visible");
             disableStartButton();
             clearInterval(spawnInterval);
         }
@@ -596,6 +605,7 @@
 
         function drawGuy(unitDiv, id) {
             let ctx = unitDiv.getContext('2d');
+            ctx.clearRect(0,0, unitDiv.width, unitDiv.height);
 
             switch(parseInt(id)) {
                 case 0:
@@ -614,7 +624,6 @@
                     ctx.fillRect(unitDiv.width * .89, unitDiv.height * .10, 8, unitDiv.height * .80);
                 break;
                 case 1:
-
                     ctx.fillStyle = "rgb(190,168,142)";
                     ctx.fillRect(unitDiv.width * .10, unitDiv.height * .10, unitDiv.width * .80, unitDiv.height * .80);
 
@@ -630,9 +639,88 @@
                     ctx.fillRect(unitDiv.width * .89, unitDiv.height * .10, 8, unitDiv.height * .80);
                     break;
                 case 2:
+                    ctx.fillStyle = "rgb(240,110,32)";
+                    ctx.fillRect(unitDiv.width * .10, unitDiv.height * .10, unitDiv.width * .80, unitDiv.height * .80);
+
+                    ctx.fillStyle = "black";
+                    ctx.fillRect(unitDiv.width * .20, unitDiv.height * .20, unitDiv.width * .15, unitDiv.height * .15)
+                    ctx.fillRect(unitDiv.width * .60, unitDiv.height * .20, unitDiv.width * .15, unitDiv.height * .15)
+
+                    ctx.fillRect(unitDiv.width * .25, unitDiv.height * .60, unitDiv.width * .50, unitDiv.height * .08)
+
+                    ctx.fillRect(unitDiv.width * .10, unitDiv.height * .10, unitDiv.width * .80, 4);
+                    ctx.fillRect(unitDiv.width * .10, unitDiv.height * .90, unitDiv.width * .80, 4);
+                    ctx.fillRect(unitDiv.width * .10, unitDiv.height * .10, 8, unitDiv.height * .80);
+                    ctx.fillRect(unitDiv.width * .89, unitDiv.height * .10, 8, unitDiv.height * .80);
+                    break;
+                case 3:
+                    ctx.fillStyle = "rgb(14,110,32)";
+                    ctx.fillRect(unitDiv.width * .40, unitDiv.height * .40, unitDiv.width * .20, unitDiv.height * .20);
                     break;
                 default:
+                    ctx.clearRect(0,0, unitDiv.width, unitDiv.height);
                     break;
+            }
+        }
+
+        function setButtonVisibilities(equipButton, removeButton, waveChargeDiv, battleButton) {
+            document.getElementById("equipButton").style.visibility = equipButton;
+            document.getElementById("removeButton").style.visibility = removeButton;
+            document.getElementById("waveChargeDiv").style.visibility = waveChargeDiv;
+            document.getElementById("battleButton").style.backgroundColor = battleButton;
+        }
+
+        function setUnitBarHandlers(tabName) {
+            if(tabName === "Units") {
+
+                for(let i = 1 ; i < 9; i++) {
+                    let div = document.getElementById("unit"+i);
+                    let divIdAsInt = parseInt(div.id.substring(div.id.length -1, div.id.length))
+
+                    if(divIdAsInt === selectedUnitDiv) {
+                        div.style.backgroundColor = "lightgray";
+                    }
+                    
+                    div.onmouseover = () => { div.style.backgroundColor = "lightgray" };
+                    div.onmouseout = () => { 
+                        if(divIdAsInt !== selectedUnitDiv) {
+                            div.style.backgroundColor = "gray"
+                        };
+                    }
+                    div.onclick = () => {
+                        div.style.backgroundColor = "lightgray"
+                        selectedUnitDiv = divIdAsInt;
+
+                        for(let j = 1; j < 9; j++) {
+                            let divTmp = document.getElementById("unit"+j);
+                            let divIdAsIntTmp = parseInt(divTmp.id.substring(divTmp.id.length -1, divTmp.id.length))
+
+                            if(divIdAsIntTmp !== selectedUnitDiv) {
+                                divTmp.style.backgroundColor = "gray"
+                            }
+                        }
+                    }
+
+                    div.onmousedown = null;
+                    div.onmouseup = null;
+                }
+            }
+            else if (tabName === "Battle") {
+                for(let i = 1 ; i < 9; i++) {
+                    let div = document.getElementById("unit"+i);
+                    div.onmouseover = () =>  changeBackground(div.id,'Over');
+                    div.onmouseout = () =>  changeBackground(div.id,'Out');
+                    div.onmousedown = () =>  changeBackground(div.id,'Click');
+                    div.onmouseup = () =>  changeBackground(div.id,'ClickEnd');
+                }
+            } else {
+                for(let i = 1 ; i < 9; i++) {
+                    let div = document.getElementById("unit"+i);
+                    div.onmouseover = null;
+                    div.onmouseout = null;
+                    div.onmousedown = null;
+                    div.onmouseup = null;
+                }
             }
         }
 
@@ -655,10 +743,9 @@
                         currentIntervals = [];
                     }
 
-                    document.getElementById("equipButton").style.visibility = "hidden";
-                    document.getElementById("removeButton").style.visibility = "hidden";
-                    document.getElementById("waveChargeDiv").style.visibility = "hidden";
-                    document.getElementById("battleButton").style.backgroundColor = "rgba(33, 88, 122, 0.8)";
+                    setUnitBarHandlers("Map")
+                    setButtonVisibilities("hidden", "hidden", "hidden", "rgba(33, 88, 122, 0.8)")
+
                     let map = document.createElement("div");
                     map.classList.add("mapDiv");
                     map.id = "mapDiv"
@@ -855,17 +942,9 @@
                         currentIntervals = [];
                     }
 
-                    for(let i = 1 ; i < 9; i++) {
-                        document.getElementById("unit"+i).onclick = () => {
-                            selectedUnitDiv = i;
-                        } 
-                    }
+                    setUnitBarHandlers("Units");
+                    setButtonVisibilities("visible", "visible", "hidden", "rgba(33, 88, 122, 0.8)");
 
-                    document.getElementById("equipButton").style.visibility = "visible";
-                    document.getElementById("removeButton").style.visibility = "visible";
-                    document.getElementById("waveChargeDiv").style.visibility = "hidden";
-
-                    document.getElementById("battleButton").style.backgroundColor = "rgba(33, 88, 122, 0.8)";
                     let units = document.createElement("div");
                     units.classList.add("unitsDiv");
                     units.id = "unitsDiv";
@@ -982,11 +1061,9 @@
                         currentIntervals = [];
                     }
 
-                    document.getElementById("equipButton").style.visibility = "hidden";
-                    document.getElementById("removeButton").style.visibility = "hidden";
-                    document.getElementById("waveChargeDiv").style.visibility = "hidden";
+                    setUnitBarHandlers("Upgrades");
+                    setButtonVisibilities("hidden", "hidden", "hidden", "rgba(33, 88, 122, 0.8)")
 
-                    document.getElementById("battleButton").style.backgroundColor = "rgba(33, 88, 122, 0.8)";
                     let upgrades = document.createElement("div");
                     upgrades.classList.add("upgradesDiv");
                     upgrades.id = "upgradesDiv";
@@ -1085,50 +1162,14 @@
                     currentTab = "Battle";
                     isPlayingGame = true;
 
-                    document.getElementById("equipButton").style.visibility = "hidden";
-                    document.getElementById("removeButton").style.visibility = "hidden";
-                    document.getElementById("waveChargeDiv").style.visibility = "visible";
+                    setUnitBarHandlers("Battle")
+                    setButtonVisibilities("hidden", "hidden", "visible", "rgba(50, 120, 122, 0.8)")
 
-                    document.getElementById("battleButton").style.backgroundColor = "rgba(50, 120, 122, 0.8)";
+                    //TODO make enemy handicap system
+                    let healthBarDivs = setupHealthBars(false, 0);
 
-                    let healthBarDiv1 = document.createElement("div");
-                    healthBarDiv1.style.position =  "absolute";
-                    healthBarDiv1.style.width =  "49%";
-                    healthBarDiv1.style.height = "16px";
-                    healthBarDiv1.style.border = "black solid 2px";
-                    healthBarDiv1.style.left = "0px";
-                    healthBarDiv1.style.top = "9.5%";
-                    healthBarDiv1.style.marginLeft = "1%";
-                    healthBarDiv1.style.backgroundColor = "burlywood";
-
-                    let healthBarDiv2 = document.createElement("div");
-                    healthBarDiv2.style.position =  "absolute";
-                    healthBarDiv2.style.width =  "49%";
-                    healthBarDiv2.style.height = "16px";
-                    healthBarDiv2.style.border = "black solid 2px";
-                    healthBarDiv2.style.left = "50%";
-                    healthBarDiv2.style.top = "9.5%";
-                    healthBarDiv2.style.backgroundColor = "burlywood";
-
-                    let healthBarDiv1Inner = document.createElement("div");
-                    healthBarDiv1Inner.id = "healthBar1";
-                    healthBarDiv1Inner.style.float = "right";
-                    healthBarDiv1Inner.style.width = "10%";
-                    healthBarDiv1Inner.style.height = "100%";
-                    healthBarDiv1Inner.style.backgroundColor = "blue";
-                    healthBarDiv1Inner.style.transition = "width 1s ease";
-
-                    let healthBarDiv2Inner = document.createElement("div");
-                    healthBarDiv2Inner.id = "healthBar2";
-                    healthBarDiv2Inner.style.width = "10%";
-                    healthBarDiv2Inner.style.height = "100%";
-                    healthBarDiv2Inner.style.backgroundColor = "red";
-                    healthBarDiv2Inner.style.transition = "width 1s ease";
-
-                    healthBarDiv1.appendChild(healthBarDiv1Inner);
-                    healthBarDiv2.appendChild(healthBarDiv2Inner);
-                    main.appendChild(healthBarDiv1);
-                    main.appendChild(healthBarDiv2);
+                    main.appendChild(healthBarDivs[0]);
+                    main.appendChild(healthBarDivs[1]);
 
                     for(let i = 1; i < 9; i++) {
                         let laneDiv = document.createElement("div");
@@ -1151,6 +1192,47 @@
             }
         }
 
+        function setupHealthBars(enemyHandicap, amount) {
+            let healthBarDiv1 = document.createElement("div");
+            healthBarDiv1.style.position =  "absolute";
+            healthBarDiv1.style.width =  "49%";
+            healthBarDiv1.style.height = "16px";
+            healthBarDiv1.style.border = "black solid 2px";
+            healthBarDiv1.style.left = "0px";
+            healthBarDiv1.style.top = "9.5%";
+            healthBarDiv1.style.marginLeft = "1%";
+            healthBarDiv1.style.backgroundColor = "burlywood";
+
+            let healthBarDiv2 = document.createElement("div");
+            healthBarDiv2.style.position =  "absolute";
+            healthBarDiv2.style.width =  "49%";
+            healthBarDiv2.style.height = "16px";
+            healthBarDiv2.style.border = "black solid 2px";
+            healthBarDiv2.style.left = "50%";
+            healthBarDiv2.style.top = "9.5%";
+            healthBarDiv2.style.backgroundColor = "burlywood";
+
+            let healthBarDiv1Inner = document.createElement("div");
+            healthBarDiv1Inner.id = "healthBar1";
+            healthBarDiv1Inner.style.float = "right";
+            healthBarDiv1Inner.style.width = "10%";
+            healthBarDiv1Inner.style.height = "100%";
+            healthBarDiv1Inner.style.backgroundColor = "blue";
+            healthBarDiv1Inner.style.transition = "width 1s ease";
+
+            let healthBarDiv2Inner = document.createElement("div");
+            healthBarDiv2Inner.id = "healthBar2";
+            healthBarDiv2Inner.style.width = "10%";
+            healthBarDiv2Inner.style.height = "100%";
+            healthBarDiv2Inner.style.backgroundColor = "red";
+            healthBarDiv2Inner.style.transition = "width 1s ease";
+
+            healthBarDiv1.appendChild(healthBarDiv1Inner);
+            healthBarDiv2.appendChild(healthBarDiv2Inner);
+
+            return [healthBarDiv1, healthBarDiv2];
+        }
+
         function isInRange(checkVal, range) {
             let rangeLeft = range[0];
             let rangeRight = range[1];
@@ -1160,10 +1242,26 @@
 
         function equipUnit() {
             let unit = unitList[selectedUnitIndex];
-            let listCheck = activeUnitList.filter(x => x.unitId === unit.id)
+            let listCheck = activeUnitList.filter(x => x.unitId === unit.id);
 
             if(listCheck.length === 0) {
-                drawGuy("unit" +selectedUnitDiv, unit.id)
+                activeUnitList[selectedUnitDiv-1].timeout = unit.cooldown;
+                activeUnitList[selectedUnitDiv-1].unitId = unit.id;
+                activeUnitList[selectedUnitDiv-1].unitName = unit.name;
+
+                drawGuy(document.getElementById("unit" +selectedUnitDiv+"Canvas"), unit.id);
+            }
+        }
+
+        function removeUnit() {
+            let unit = unitList[selectedUnitIndex];
+            let listCheck = activeUnitList.filter(x => x.unitId === unit.id);
+
+            if(listCheck.length > 0) {
+                activeUnitList[selectedUnitDiv-1].unitName = "";
+                activeUnitList[selectedUnitDiv-1].timeout = -1;
+                activeUnitList[selectedUnitDiv-1].unitId = -1;
+                drawGuy(document.getElementById("unit" +selectedUnitDiv+ "Canvas"), -1);
             }
         }
 
@@ -1326,7 +1424,7 @@
 
         function createGuyUnit(overrideLane, direction, speed, unitId, enemy = false) {
 
-           if(enemy) {
+           if (enemy) {
                overrideLane = Math.floor(Math.random() * 7) + 1;
            }
 
@@ -1460,7 +1558,7 @@
            }
        }
 
-    function toFindDuplicates(arry) {
+        function toFindDuplicates(arry) {
        let uniqueElements = [];
        arry.forEach(x => {
            for(let i = 0; i < arry.length; i++) {
@@ -1819,11 +1917,6 @@
                     <div
                         id="unit1"
                         class="unitDiv"
-                        onmouseover="changeBackground('unit1','Over')"
-                        onmouseout="changeBackground('unit1', 'Out')"
-                        onmousedown="changeBackground('unit1', 'Click')"
-                        onmouseup="changeBackground('unit1', 'ClickEnd')"
-                        tabindex="-1"
                     >1
                         <canvas id="unit1Canvas" class="unitCanvas"></canvas>
                         <div id="unit1Holder" class="unitHolder"></div>
@@ -1913,8 +2006,8 @@
                     </div>
                 </div>
                 <div style="width:25%; margin-left: 1%; margin-right: 1%; display:flex; justify-content: space-evenly">
-                    <button id="equipButton" class="gameButtonEquip" style="width:40%;">Equip</button>
-                    <button id="removeButton" class="gameButtonEquip" style="width:40%;">Remove</button>
+                    <button id="equipButton" class="gameButtonEquip" style="width:40%;" onclick="equipUnit()">Equip</button>
+                    <button id="removeButton" class="gameButtonEquip" style="width:40%;" onclick="removeUnit()">Remove</button>
                 </div>
             </div>
         </div>
