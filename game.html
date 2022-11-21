@@ -1,0 +1,1958 @@
+<!DOCTYPE html>
+<html lang="EN">
+<head>
+   <script>
+        let userDataDictionary = {
+            gold: 0,
+            stage: 0,
+            upgrades: {
+                unit1: 0,
+                unit2: 0,
+                unit3: 0
+            },
+            exp: 0
+        };
+        let canStartGame = false;
+        let canSpawnUnit = true;
+        let selectedLane = 1;
+        let isPlayingGame = false;
+        let spawnInterval = undefined;
+        let adjectives = ["Ablaze", "Abrupt", "Accomplished", "Active", "Adored", "Adulated", "Adventurous", "Affectionate", "Amused", "Amusing", "Animal-like", "Antique", "Appreciated", "Archaic", "Ardent", "Arrogant", "Astonished", "Audacious", "Authoritative", "Awestruck", "Beaming", "Bewildered", "Bewitching", "Blissful", "Boisterous", "Booming", "Bouncy", "Breathtaking", "Bright", "Brilliant", "Bubbling", "Calm", "Calming", "Capricious", "Celestial", "Charming", "Cheerful", "Cherished", "Chiaroscuro", "Chilled", "Comical", "Commanding", "Companionable", "Confident", "Contentment", "Courage", "Crazy", "Creepy", "Dancing", "Dazzling", "Delicate", "Delightful", "Demented", "Desirable", "Determined", "Devoted", "Dominant", "Dramatic", "Drawn out", "Dripping", "Dumbstruck", "Ebullient", "Elated", "Elegant", "Enchanted", "Energetic", "Enthusiastic", "Ethereal", "Exaggerated", "Exalted", "Expectant", "Expressive", "Exuberant", "Faint", "Fantastical", "Favorable", "Febrile", "Feral", "Feverish", "Fiery", "Floating", "Flying", "Folksy", "Fond", "Forgiven", "Forgiving", "Freakin' awesome", "Frenetic", "Frenzied", "Friendly. amorous", "From a distance", "Frosted", "Funny", "Furry", "Galloping", "Gaping", "Gentle", "Giddy", "Glacial", "Gladness", "Gleaming", "Gleeful", "Gorgeous", "Graceful", "Grateful", "Halting", "Happy", "Haunting", "Heavenly", "Hidden", "High-spirited", "Honor", "Hopeful", "Hopping", "Humble", "Hushed", "Hypnotic", "Illuminated", "Immense", "Imperious", "Impudent", "In charge", "Inflated", "Innocent", "Inspired", "Intimate", "Intrepid", "Jagged", "Joking", "Joyful", "Jubilant", "Kindly", "Languid", "Larger than life", "Laughable", "Lickety-split", "Lighthearted", "Limping", "Linear", "Lively", "Lofty", "Love of", "Lovely", "Lulling", "Luminescent", "Lush", "Luxurious", "Magical", "Maniacal", "Manliness", "March-like", "Masterful", "Merciful", "Merry", "Mischievous", "Misty", "Modest", "Moonlit", "Mysterious", "Mystical", "Mythological", "Nebulous", "Nostalgic", "On fire", "Overstated", "Paganish", "Partying", "Perfunctory", "Perky", "Perplexed", "Persevering", "Pious", "Playful", "Pleasurable", "Poignant", "Portentous", "Posh", "Powerful", "Pretty", "Prickly", "Prideful", "Princesslike", "Proud", "Puzzled", "Queenly", "Questing", "Quiet", "Racy", "Ragged", "Regal", "Rejoicing", "Relaxed", "Reminiscent", "Repentant", "Reserved", "Resolute", "Ridiculous", "Ritualistic", "Robust", "Running", "Sarcastic", "Scampering", "Scoffing", "Scurrying", "Sensitive", "Serene", "Shaking", "Shining", "Silky", "Silly", "Simple", "Singing", "Skipping", "Smooth", "Sneaky", "Soaring", "Sophisticated", "Sparkling", "Spell-like", "Spherical", "Spidery", "Splashing", "Splendid", "Spooky", "Sprinting", "Starlit", "Starry", "Startling", "Successful", "Summery", "Surprised", "Sympathetic", "Tapping", "Teasing", "Tender", "Thoughtful", "Thrilling", "Tingling", "Tinkling", "Tongue-in-cheek", "Totemic", "Touching", "Tranquil", "Treasured", "Trembling", "Triumphant", "Twinkling", "Undulating", "Unruly", "Urgent", "Veiled", "Velvety", "Victorious", "Vigorous", "Virile", "Walking", "Wild", "Witty", "Wondering", "Zealous", "Zestful"];
+        let nouns = ["Armour", "Barrymore", "Cabot", "Catholicism", "Chihuahua", "Christianity", "Easter", "Frenchman", "Lowry", "Mayer", "Orientalism", "Pharaoh", "Pueblo", "Pullman", "Rodeo", "Saturday", "Sister", "Snead", "Sarah", "Tuesday", "Woodward", "abbey", "absence", "absorption", "abstinence", "absurdity", "abundance", "acceptance", "accessibility", "accommodation", "accomplice", "accountability", "accounting", "accreditation", "accuracy", "acquiescence", "acreage", "actress", "actuality", "adage", "adaptation", "adherence", "adjustment", "adoption", "adultery", "advancement", "advert", "advertisement", "advertising", "advice", "aesthetics", "affinity", "aggression", "agriculture", "aircraft", "airtime", "allegation", "allegiance", "allegory", "allergy", "allies", "alligator", "allocation", "allotment", "altercation", "ambulance", "ammonia", "anatomy", "anemia", "ankle", "announcement", "annoyance", "annuity", "anomaly", "anthropology", "anxiety", "apartheid", "apologise", "apostle", "apparatus", "appeasement", "appellation", "appendix", "applause", "appointment", "appraisal", "archery", "archipelago", "architecture", "ardor", "arrears", "arrow", "artisan", "artistry", "ascent", "assembly", "assignment", "association", "asthma", "atheism", "attacker", "attraction", "attractiveness", "auspices", "authority", "avarice", "aversion", "aviation", "babbling", "backlash", "baker", "ballet", "balls", "banjo", "baron", "barrier", "barrister", "bases", "basin", "basis", "battery", "battling", "bedtime", "beginner", "begun", "bending", "bicycle", "billing", "bingo", "biography", "biology", "birthplace", "blackberry", "blather", "blossom", "boardroom", "boasting", "bodyguard", "boldness", "bomber", "bondage", "bonding", "bones", "bonus", "bookmark", "boomer", "booty", "bounds", "bowling", "brainstorming", "breadth", "breaker", "brewer", "brightness", "broccoli", "broth", "brotherhood", "browsing", "brunch", "brunt", "building", "bullion", "bureaucracy", "burglary", "buyout", "by-election", "cabal", "cabbage", "calamity", "campaign", "canonization", "captaincy", "carcass", "carrier", "cartridge", "cassette", "catfish", "caught", "celebrity", "cemetery", "certainty", "certification", "charade", "chasm", "check-in", "cheerleader", "cheesecake", "chemotherapy", "chili", "china", "chivalry", "cholera", "cilantro", "circus", "civilisation", "civility", "clearance", "clearing", "clerk", "climber", "closeness", "clothing", "clutches", "coaster", "coconut", "coding", "collaborator", "colleague", "college", "collision", "colors", "combustion", "comedian", "comer", "commander", "commemoration", "commenter", "commissioner", "commune", "competition", "completeness", "complexity", "computing", "comrade", "concur", "condominium", "conduit", "confidant", "configuration", "confiscation", "conflagration", "conflict", "consist", "consistency", "consolidation", "conspiracy", "constable", "consul", "consultancy", "contentment", "contents", "contractor", "conversation", "cornerstone", "corpus", "correlation", "councilman", "counselor", "countdown", "countryman", "coverage", "covering", "coyote", "cracker", "creator", "criminality", "crocodile", "cropping", "cross-examination", "crossover", "crossroads", "culprit", "cumin", "curator", "curfew", "cursor", "custard", "cutter", "cyclist", "cyclone", "cylinder", "cynicism", "daddy", "damsel", "darkness", "dawning", "daybreak", "dealing", "dedication", "deduction", "defection", "deference", "deficiency", "definition", "deflation", "degeneration", "delegation", "delicacy", "delirium", "deliverance", "demeanor", "demon", "demonstration", "denomination", "dentist", "departure", "depletion", "depression", "designation", "despotism", "detention", "developer", "devolution", "dexterity", "diagnosis", "dialect", "differentiation", "digger", "digress", "dioxide", "diploma", "disability", "disarmament", "discord", "discovery", "dishonesty", "dismissal", "disobedience", "dispatcher", "disservice", "distribution", "distributor", "diver", "diversity", "docking", "dollar", "dominance", "domination", "dominion", "donkey", "doorstep", "doorway", "dossier", "downside", "drafting", "drank", "drilling", "driver", "drumming", "drunkenness", "duchess", "ducking", "dugout", "dumps", "dwelling", "dynamics", "eagerness", "earnestness", "earnings", "eater", "editor", "effectiveness", "electricity", "elements", "eloquence", "emancipation", "embodiment", "embroidery", "emperor", "employment", "encampment", "enclosure", "encouragement", "endangerment", "enlightenment", "enthusiasm", "environment", "environs", "envoy", "epilepsy", "equation", "equator", "error", "espionage", "estimation", "evacuation", "exaggeration", "examination", "exclamation", "expediency", "exploitation", "extinction", "eyewitness", "falls", "fascism", "fastball", "feces", "feedback", "ferocity", "fertilization", "fetish", "finale", "firing", "fixing", "flashing", "flask", "flora", "fluke", "folklore", "follower", "foothold", "footing", "forefinger", "forefront", "forgiveness", "formality", "formation", "formula", "foyer", "fragmentation", "framework", "fraud", "freestyle", "frequency", "friendliness", "fries", "frigate", "fulfillment", "function", "functionality", "fundraiser", "fusion", "futility", "gallantry", "gallery", "genesis", "genitals", "girlfriend", "glamour", "glitter", "glucose", "google", "grandeur", "grappling", "greens", "gridlock", "grocer", "groundwork", "grouping", "gunman", "gusto", "habitation", "hacker", "hallway", "hamburger", "hammock", "handling", "hands", "handshake", "happiness", "hardship", "headcount", "header", "headquarters", "heads", "headset", "hearth", "hearts", "heath", "hegemony", "height", "hello", "helper", "helping", "helplessness", "hierarchy", "hoarding", "hockey", "homeland", "homer", "honesty", "horror", "horseman", "hostility", "housing", "humility", "hurricane", "iceberg", "ignition", "illness", "illustration", "illustrator", "immunity", "immunization", "imperialism", "imprisonment", "inaccuracy", "inaction", "inactivity", "inauguration", "indecency", "indicator", "inevitability", "infamy", "infiltration", "influx", "iniquity", "innocence", "innovation", "insanity", "inspiration", "instruction", "instructor", "insurer", "interact", "intercession", "intercourse", "intermission", "interpretation", "intersection", "interval", "intolerance", "intruder", "invasion", "investment", "involvement", "irrigation", "iteration", "jenny", "jogging", "jones", "joseph", "juggernaut", "juncture", "jurisprudence", "juror", "kangaroo", "kingdom", "knocking", "laborer", "larceny", "laurels", "layout", "leadership", "leasing", "legislation", "leopard", "liberation", "licence", "lifeblood", "lifeline", "ligament", "lighting", "likeness", "line-up", "lineage", "liner", "lineup", "liquidation", "listener", "literature", "litigation", "litre", "loathing", "locality", "lodging", "logic", "longevity", "lookout", "lordship", "lustre", "ma'am", "machinery", "madness", "magnificence", "mahogany", "mailing", "mainframe", "maintenance", "majority", "manga", "mango", "manifesto", "mantra", "manufacturer", "maple", "martin", "martyrdom", "mathematician", "matrix", "matron", "mayhem", "mayor", "means", "meantime", "measurement", "mechanics", "mediator", "medics", "melodrama", "memory", "mentality", "metaphysics", "method", "metre", "miner", "mirth", "misconception", "misery", "mishap", "misunderstanding", "mobility", "molasses", "momentum", "monarchy", "monument", "morale", "mortality", "motto", "mouthful", "mouthpiece", "mover", "movie", "mowing", "murderer", "musician", "mutation", "mythology", "narration", "narrator", "nationality", "negligence", "neighborhood", "neighbour", "nervousness", "networking", "nexus", "nightmare", "nobility", "nobody", "noodle", "normalcy", "notification", "nourishment", "novella", "nucleus", "nuisance", "nursery", "nutrition", "nylon", "oasis", "obscenity", "obscurity", "observer", "offense", "onslaught", "operation", "opportunity", "opposition", "oracle", "orchestra", "organisation", "organizer", "orientation", "originality", "ounce", "outage", "outcome", "outdoors", "outfield", "outing", "outpost", "outset", "overseer", "owner", "oxygen", "pairing", "panther", "paradox", "parliament", "parsley", "parson", "passenger", "pasta", "patchwork", "pathos", "patriotism", "pendulum", "penguin", "permission", "persona", "perusal", "pessimism", "peter", "philosopher", "phosphorus", "phrasing", "physique", "piles", "plateau", "playing", "plaza", "plethora", "plurality", "pneumonia", "pointer", "poker", "policeman", "polling", "poster", "posterity", "posting", "postponement", "potassium", "pottery", "poultry", "pounding", "pragmatism", "precedence", "precinct", "preoccupation", "pretense", "priesthood", "prisoner", "privacy", "probation", "proceeding", "proceedings", "processing", "processor", "progression", "projection", "prominence", "propensity", "prophecy", "prorogation", "prospectus", "protein", "prototype", "providence", "provider", "provocation", "proximity", "puberty", "publicist", "publicity", "publisher", "pundit", "putting", "quantity", "quart", "quilting", "quorum", "racism", "radiance", "ralph", "rancher", "ranger", "rapidity", "rapport", "ratification", "rationality", "reaction", "reader", "reassurance", "rebirth", "receptor", "recipe", "recognition", "recourse", "recreation", "rector", "recurrence", "redemption", "redistribution", "redundancy", "refinery", "reformer", "refrigerator", "regularity", "regulator", "reinforcement", "reins", "reinstatement", "relativism", "relaxation", "rendition", "repayment", "repentance", "repertoire", "repository", "republic", "reputation", "resentment", "residency", "resignation", "restaurant", "resurgence", "retailer", "retention", "retirement", "reviewer", "riches", "righteousness", "roadblock", "robber", "rocks", "rubbing", "runoff", "saloon", "salvation", "sarcasm", "saucer", "savior", "scarcity", "scenario", "scenery", "schism", "scholarship", "schoolboy", "schooner", "scissors", "scolding", "scooter", "scouring", "scrimmage", "scrum", "seating", "sediment", "seduction", "seeder", "seizure", "semicolon", "semiconductor", "semifinal", "senator", "sending", "serenity", "seriousness", "servitude", "sesame", "setup", "sewing", "sharpness", "shaving", "shoplifting", "shopping", "siding", "simplicity", "simulation", "sinking", "skate", "sloth", "slugger", "snack", "snail", "snapshot", "snark", "soccer", "solemnity", "solicitation", "solitude", "somewhere", "sophistication", "sorcery", "souvenir", "spaghetti", "specification", "specimen", "specs", "spectacle", "spectre", "speculation", "sperm", "spoiler", "squad", "squid", "staging", "stagnation", "staircase", "stairway", "stamina", "standpoint", "standstill", "stanza", "statement", "stillness", "stimulus", "stocks", "stole", "stoppage", "storey", "storyteller", "stylus", "subcommittee", "subscription", "subsidy", "suburb", "success", "sufferer", "supposition", "suspension", "sweater", "sweepstakes", "swimmer", "syndrome", "synopsis", "syntax", "system", "tablespoon", "taker", "tavern", "technology", "telephony", "template", "tempo", "tendency", "tendon", "terrier", "terror", "terry", "theater", "theology", "therapy", "thicket", "thoroughfare", "threshold", "thriller", "thunderstorm", "ticker", "tiger", "tights", "to-day", "tossing", "touchdown", "tourist", "tourney", "toxicity", "tracing", "tractor", "translation", "transmission", "transmitter", "trauma", "traveler", "treadmill", "trilogy", "trout", "tuning", "twenties", "tycoon", "tyrant", "ultimatum", "underdog", "underwear", "unhappiness", "unification", "university", "uprising", "vaccination", "validity", "vampire", "vanguard", "variation", "vegetation", "verification", "viability", "vicinity", "victory", "viewpoint", "villa", "vindication", "violation", "vista", "vocalist", "vogue", "volcano", "voltage", "vomiting", "vulnerability", "waistcoat", "waitress", "wardrobe", "warmth", "watchdog", "wealth", "weariness", "whereabouts", "whisky", "whiteness", "widget", "width", "windfall", "wiring", "witchcraft", "withholding", "womanhood", "words", "workman", "youngster" ];
+        let enemies = [];
+        let currentOpponent = undefined;
+        let isBossFight = false;
+        let currentTab = undefined;
+        let isEquipping = false;
+        let currentIntervals = [];
+        let enemyDifficultyMultiplier = 0.1;
+        let selectedUnitIndex = 0;
+        let selectedUnitDiv = 1;
+        let gridOrder = {
+            rows:[
+                "1 / span 11", "12 / span 11", "22 / span 11",
+                "1 / span 11", "12 / span 11", "22 / span 11",
+                "1 / span 11", "12 / span 11", "22 / span 11"
+            ],
+            columns:[
+                "1 / span 11", "1 / span 13", "1 / span 11",
+                "12 / span 11", "14 / span 4", "12 / span 11",
+                "23 / span 11", "18 / span 15", "23 / span 11"
+            ]
+        };
+        let enemyPos = {
+            left: [
+                "8%", "8%", "8%",
+                "0%", "0%", "20%",
+                "60%", "80%", "50%"
+            ],
+            top: [
+                "10%", "10%", "22.5%",
+                "3%", "0%", "22.5%",
+                "0%", "20%", "20%"
+            ]
+        };
+        let theNoNoZone = [];
+        let currentUnitList = [];
+        let upgradeTrees = {
+            trees: [
+                {
+                    path: [1,2,3,2,1],
+                    isUpgraded : [[false], [false, false], [false, false, false], [false,false], [false]],
+                    id: 0
+                },
+                {
+                    path: [2,2,3,3,2],
+                    isUpgraded : [false, false, false, false, false],
+                    id: 1
+                }
+                ,
+                {
+                    path: [3,1,2,2,3],
+                    isUpgraded : [false, false, false, false, false],
+                    id: 2
+                }
+            ]
+        };
+        let rotates = ["-15deg","-30deg","15deg","15deg","-30deg","-45deg","30deg","45deg","15deg"];
+        let playWidth = 0;
+        let playHeight = 0;
+        let unitList = [
+            {
+                name: "TestGuy",
+                attack: "10",
+                defence: "123",
+                special: "sadness",
+                upgradeLevel: "1",
+                id: 0
+            },
+            {
+                name: "TestGuy123",
+                attack: "10",
+                defence: "123",
+                special: "sadnesvvv",
+                upgradeLevel: "1"
+            },
+            {
+                name: "TestGuysdfdfgs",
+                attack: "10w13",
+                defence: "123a",
+                special: "sadness12",
+                upgradeLevel: "1"
+            },
+            {
+                name: "TestGuy123",
+                attack: "10",
+                defence: "123",
+                special: "sadnesvvv",
+                upgradeLevel: "1"
+            },
+            {
+                name: "TestGuysdfdfgs",
+                attack: "10w13",
+                defence: "123a",
+                special: "sadness12",
+                upgradeLevel: "1"
+            },
+            {
+                name: "TestGuy1",
+                attack: "10",
+                defence: "123",
+                special: "sadnesvvv",
+                upgradeLevel: "1"
+            },
+            {
+                name: "TestGuysdfdfgs",
+                attack: "10w13",
+                defence: "123a",
+                special: "sadness12",
+                upgradeLevel: "1"
+            },
+            {
+                name: "TestGuy123",
+                attack: "10",
+                defence: "123",
+                special: "sadnesvvv",
+                upgradeLevel: "1"
+            },
+            {
+                name: "TestGuy",
+                attack: "10",
+                defence: "123",
+                special: "sadness",
+                upgradeLevel: "1"
+            },
+            {
+                name: "TestGuy123",
+                attack: "10",
+                defence: "123",
+                special: "sadnesvvv",
+                upgradeLevel: "1"
+            },
+            {
+                name: "TestGuysdfdfgs",
+                attack: "10w13",
+                defence: "123a",
+                special: "sadness12",
+                upgradeLevel: "1"
+            },
+            {
+                name: "TestGuy123",
+                attack: "10",
+                defence: "123",
+                special: "sadnesvvv",
+                upgradeLevel: "1"
+            },
+            {
+                name: "TestGuysdfdfgs",
+                attack: "10w13",
+                defence: "123a",
+                special: "sadness12",
+                upgradeLevel: "1"
+            },
+            {
+                name: "TestGuy123",
+                attack: "10",
+                defence: "123",
+                special: "sadnesvvv",
+                upgradeLevel: "1"
+            },
+            {
+                name: "TestGuysdfdfgs",
+                attack: "10w13",
+                defence: "123a",
+                special: "sadness12",
+                upgradeLevel: "1"
+            },
+            {
+                name: "TestGuy123",
+                attack: "10",
+                defence: "123",
+                special: "sadnesvvv",
+                upgradeLevel: "1"
+            },
+            {
+                name: "TestGuy",
+                attack: "10",
+                defence: "123",
+                special: "sadness",
+                upgradeLevel: "1"
+            },
+            {
+                name: "TestGuy123",
+                attack: "10",
+                defence: "123",
+                special: "sadnesvvv",
+                upgradeLevel: "1"
+            },
+            {
+                name: "TestGuysdfdfgs",
+                attack: "10w13",
+                defence: "123a",
+                special: "sadness12",
+                upgradeLevel: "1"
+            },
+            {
+                name: "TestGuy123",
+                attack: "10",
+                defence: "123",
+                special: "sadnesvvv",
+                upgradeLevel: "1"
+            },
+            {
+                name: "TestGuysdfdfgs",
+                attack: "10w13",
+                defence: "123a",
+                special: "sadness12",
+                upgradeLevel: "1"
+            },
+            {
+                name: "TestGuy123",
+                attack: "10",
+                defence: "123",
+                special: "sadnesvvv",
+                upgradeLevel: "1"
+            },
+            {
+                name: "TestGuysdfdfgs",
+                attack: "10w13",
+                defence: "123a",
+                special: "sadness12",
+                upgradeLevel: "1"
+            },
+            {
+                name: "TestGuy123",
+                attack: "10",
+                defence: "123",
+                special: "sadnesvvv",
+                upgradeLevel: "1"
+            },
+            {
+                name: "TestGuy",
+                attack: "10",
+                defence: "123",
+                special: "sadness",
+                upgradeLevel: "1"
+            },
+            {
+                name: "TestGuy123",
+                attack: "10",
+                defence: "123",
+                special: "sadnesvvv",
+                upgradeLevel: "1"
+            },
+            {
+                name: "TestGuysdfdfgs",
+                attack: "10w13",
+                defence: "123a",
+                special: "sadness12",
+                upgradeLevel: "1"
+            },
+            {
+                name: "TestGuy123",
+                attack: "10",
+                defence: "123",
+                special: "sadnesvvv",
+                upgradeLevel: "1"
+            },
+            {
+                name: "SussyBaka",
+                attack: "10w13",
+                defence: "123a",
+                special: "sadness12",
+                upgradeLevel: "1"
+            },
+            {
+                name: "TestGuy123",
+                attack: "10",
+                defence: "123",
+                special: "sadnesvvv",
+                upgradeLevel: "1"
+            },
+            {
+                name: "TestGuysdfdfgs",
+                attack: "10w13",
+                defence: "123a",
+                special: "sadness12",
+                upgradeLevel: "1"
+            },
+            {
+                name: "TestGuy123",
+                attack: "10",
+                defence: "123",
+                special: "sadnesvvv",
+                upgradeLevel: "1"
+            },
+        ]
+        let activeUnitList = [
+            {
+                unitName: "",
+                slot: "unit1",
+                timeout: 500,
+                unitId: 0
+            },
+            {
+                unitName: "",
+                slot: "unit2",
+                timeout: 500,
+                unitId: 0
+            },
+            {
+                unitName: "",
+                slot: "unit3",
+                timeout: 500,
+                unitId: 0
+            },
+            {
+                unitName: "",
+                slot: "unit4",
+                timeout: 500,
+                unitId: 0
+            },
+            {
+                unitName: "",
+                slot: "unit5",
+                timeout: 500,
+                unitId: 0
+            },
+            {
+                unitName: "",
+                slot: "unit6",
+                timeout: 500,
+                unitId: 0
+            },
+            {
+                unitName: "",
+                slot: "unit7",
+                timeout: 500,
+                unitId: 0
+            },
+            {
+                unitName: "",
+                slot: "unit8",
+                timeout: 500,
+                unitId: 0
+            }
+        ]
+
+
+        function capitalizeWords() {
+            for(let i = 0; i < nouns.length; i++) {
+                let newWord = nouns[i].charAt(0).toUpperCase() + nouns[i].slice(1);
+                if(newWord.charAt(newWord.length-1) !== 's') {
+                    newWord += "s";
+                }
+                nouns[i] = newWord;
+            }
+        }
+
+        function changeBackground(id, mouseState) {
+            let x = document.getElementById("mainGamePlayWindow")
+            x.setAttribute('tabindex', '-1');
+            x.focus();
+
+            if(mouseState === "Over") {
+                document.getElementById(id).style.backgroundColor = "lightgray";
+            }
+            else if(mouseState === "Click") {
+                document.getElementById(id).style.backgroundColor = "darkgray";
+
+                if(currentTab === "Battle") {
+                    let found = activeUnitList.find(x => x.slot === id)
+
+                    if(document.getElementById(id).getAnimations().length === 0) {
+                        document.getElementById(id).style.animation = "unitDivAnimate 0.5s ease";
+                        setTimeout(() => {
+                                document.getElementById(id).style.animation = "";
+                                canSpawnUnit = true;
+                            },
+                            found.timeout
+                        );
+                        createGuyUnit(selectedLane, "right", 2, found.unitId);
+                        canSpawnUnit = false;
+                    }
+                }
+            }
+            else if(mouseState === "ClickEnd") {
+                document.getElementById(id).style.backgroundColor = "lightgray";
+            }
+            else {
+                document.getElementById(id).style.backgroundColor = "gray";
+            }
+        }
+
+        function getRandomColor() {
+            let letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        function generateEnemyMapPositions() {
+            for(let i = 0; i < 9; i++) {
+                let randomName = "The "+adjectives[getRandomInt(0, adjectives.length-1)] + " " +nouns[getRandomInt(0, nouns.length-1)];
+                let randomColor = getRandomColor();
+
+                let randomNumberOfLesserEnemies = getRandomInt(3,6);
+
+                let enemyObj = {
+                    name: randomName,
+                    color: randomColor,
+                    numberOfChildren: randomNumberOfLesserEnemies,
+                    bossDefeated: false,
+                    children: {
+                        sizes: [],
+                        names: [],
+                        defeatedList: [],
+                    }
+                };
+
+                for(let j = 0; j < randomNumberOfLesserEnemies; j++) {
+                    let randomSize = getRandomInt(20, 75);
+                    enemyObj.children.sizes.push(randomSize);
+                    enemyObj.children.names.push(randomName + "-" +j);
+                    enemyObj.children.defeatedList.push(false);
+                }
+
+                enemies.push(enemyObj);
+            }
+        }
+
+        function getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min) + min);
+        }
+
+        function enableStartButton() {
+            canStartGame = true;
+            document.getElementById("startButton").classList.remove("buttonDisabled");
+            document.getElementById("startButton").classList.add("startButton");
+        }
+
+        function disableStartButton() {
+            canStartGame = false;
+            document.getElementById("startButton").classList.remove("startButton");
+            document.getElementById("startButton").classList.add("buttonDisabled");
+        }
+
+        function initUnitBar() {
+            drawGuy(document.getElementById("unit1Canvas"), 0);
+        }
+
+        async function clearStartMenuAndShowMainWindow() {
+            document.getElementById("newGameButton").style.visibility = "hidden";
+            document.getElementById("loadGameButton").style.visibility = "hidden";
+            document.getElementById("mainGameWindow").style.visibility = "visible";
+            document.getElementById("loadGameWindow").style.visibility = "hidden";
+            document.getElementById("mainTitle").style.visibility = "hidden";
+            disableStartButton();
+            selectedLane = 1;
+            capitalizeWords();
+            generateEnemyMapPositions();
+            showTab('Map');
+            initUnitBar();
+        }
+        
+        function waveChargeBar(chargeSpeed) {
+            setInterval(() => {
+                document.getElementById("waveChargeBarInner").style.width = parseInt(document.getElementById("waveChargeBarInner").style.width.replace("%", "")) + 1 + "%";
+            }, chargeSpeed);
+
+            setInterval(() => {
+                document.getElementById("waveChargeBarInner").style.left = parseInt(document.getElementById("waveChargeBarInner").style.left.replace("%", "")) - 1 + "%";
+            }, chargeSpeed * 2);
+        }
+
+        function clearStartMenuAndShowLoadWindow() {
+            document.getElementById("newGameButton").style.visibility = "hidden";
+            document.getElementById("loadGameButton").style.visibility = "hidden";
+            document.getElementById("mainGameWindow").style.visibility = "hidden";
+            document.getElementById("loadGameWindow").style.visibility = "visible";
+            document.getElementById("mainTitle").style.visibility = "hidden";
+            disableStartButton();
+            clearInterval(spawnInterval);
+        }
+
+        function showStartMenu() {
+            document.getElementById("newGameButton").style.visibility = "visible";
+            document.getElementById("loadGameButton").style.visibility = "visible";
+            document.getElementById("mainGameWindow").style.visibility = "hidden";
+            document.getElementById("loadGameWindow").style.visibility = "hidden";
+            document.getElementById("mainTitle").style.visibility = "visible";
+            disableStartButton();
+            clearInterval(spawnInterval);
+        }
+
+        async function dropHandler(ev) {
+            ev.preventDefault();
+            document.getElementById("dropZone").style.backgroundColor = "rgba(33, 88, 122, 0.8)";
+
+            const data = ev.dataTransfer.items;
+            const file = data[0].getAsFile();
+
+            if(file.type === "application/json") {
+                const text = file.text();
+                let jsonText = await mapTextToJsonObject(text);
+
+                mapJsonToUserDictionary(jsonText);
+
+                enableStartButton();
+            }
+            else {
+                alert("Unsupported file type");
+            }
+        }
+
+        async function mapTextToJsonObject(text) {
+            let jsonText;
+
+            await Promise.resolve(text).then(val => {
+                jsonText = JSON.parse(val);
+            }).catch(err => {
+                console.log(err);
+            });
+
+            return jsonText;
+        }
+
+        function activateStartGameButton() {
+            if (canStartGame) {
+                clearStartMenuAndShowMainWindow();
+            }
+        }
+
+        function mapJsonToUserDictionary(json) {
+            userDataDictionary.gold = json.gold;
+            userDataDictionary.stage = json.stage;
+            userDataDictionary.upgrades = json.upgrades;
+            userDataDictionary.exp = json.exp;
+        }
+
+        function dragOverHandler(ev) {
+            ev.preventDefault();
+            document.getElementById("dropZone").style.backgroundColor = "rgba(80, 88, 122, 0.8)";
+        }
+
+        function dragOverLeaveHandler() {
+            document.getElementById("dropZone").style.backgroundColor = "rgba(33, 88, 122, 0.8)";
+        }
+
+        async function loadUserDataFromText() {
+            let textArea = document.getElementById("loadGameTextArea");
+
+            let text = textArea.value;
+
+            let isValidJSON = true;
+
+            try {
+                JSON.parse(text);
+            } catch(ex) {
+                isValidJSON = false;
+            }
+
+            if(isValidJSON) {
+
+                let json = await mapTextToJsonObject(text);
+
+                mapJsonToUserDictionary(json);
+
+                enableStartButton();
+            }
+            else {
+                alert("Save file is not valid");
+            }
+        }
+
+        function exportSaveFile() {
+            let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(userDataDictionary));
+            let dlAnchorElem = document.getElementById('downloadAnchorElem');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", "save.json");
+            dlAnchorElem.setAttribute("style", "text-decoration: none; color: black");
+        }
+
+        function drawGuy(unitDiv, id) {
+            let ctx = unitDiv.getContext('2d');
+
+            switch(parseInt(id)) {
+                case 0:
+                    ctx.fillStyle = "rgb(49,168,142)";
+                    ctx.fillRect(unitDiv.width * .10, unitDiv.height * .10, unitDiv.width * .80, unitDiv.height * .80);
+
+                    ctx.fillStyle = "black";
+                    ctx.fillRect(unitDiv.width * .20, unitDiv.height * .20, unitDiv.width * .15, unitDiv.height * .15)
+                    ctx.fillRect(unitDiv.width * .60, unitDiv.height * .20, unitDiv.width * .15, unitDiv.height * .15)
+
+                    ctx.fillRect(unitDiv.width * .25, unitDiv.height * .60, unitDiv.width * .50, unitDiv.height * .08)
+
+                    ctx.fillRect(unitDiv.width * .10, unitDiv.height * .10, unitDiv.width * .80, 4);
+                    ctx.fillRect(unitDiv.width * .10, unitDiv.height * .90, unitDiv.width * .80, 4);
+                    ctx.fillRect(unitDiv.width * .10, unitDiv.height * .10, 8, unitDiv.height * .80);
+                    ctx.fillRect(unitDiv.width * .89, unitDiv.height * .10, 8, unitDiv.height * .80);
+                break;
+                case 1:
+
+                    ctx.fillStyle = "rgb(190,168,142)";
+                    ctx.fillRect(unitDiv.width * .10, unitDiv.height * .10, unitDiv.width * .80, unitDiv.height * .80);
+
+                    ctx.fillStyle = "black";
+                    ctx.fillRect(unitDiv.width * .20, unitDiv.height * .20, unitDiv.width * .15, unitDiv.height * .15)
+                    ctx.fillRect(unitDiv.width * .60, unitDiv.height * .20, unitDiv.width * .15, unitDiv.height * .15)
+
+                    ctx.fillRect(unitDiv.width * .25, unitDiv.height * .60, unitDiv.width * .50, unitDiv.height * .08)
+
+                    ctx.fillRect(unitDiv.width * .10, unitDiv.height * .10, unitDiv.width * .80, 4);
+                    ctx.fillRect(unitDiv.width * .10, unitDiv.height * .90, unitDiv.width * .80, 4);
+                    ctx.fillRect(unitDiv.width * .10, unitDiv.height * .10, 8, unitDiv.height * .80);
+                    ctx.fillRect(unitDiv.width * .89, unitDiv.height * .10, 8, unitDiv.height * .80);
+                    break;
+                case 2:
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        function showTab(tabName) {
+            let main = document.getElementById("mainGamePlayWindow");
+            clearInterval(spawnInterval);
+            selectedLane = 1;
+
+            if(currentTab === "Battle" && tabName === "Battle") { return; }
+
+            while(main.firstChild) {
+                main.removeChild(main.firstChild);
+            }
+
+            switch(tabName) {
+
+                case "Map":
+                    if(currentTab === "Battle") {
+                        currentIntervals.forEach(x => clearInterval(x));
+                        currentIntervals = [];
+                    }
+
+                    document.getElementById("equipButton").style.visibility = "hidden";
+                    document.getElementById("removeButton").style.visibility = "hidden";
+                    document.getElementById("waveChargeDiv").style.visibility = "hidden";
+                    document.getElementById("battleButton").style.backgroundColor = "rgba(33, 88, 122, 0.8)";
+                    let map = document.createElement("div");
+                    map.classList.add("mapDiv");
+                    map.id = "mapDiv"
+                    currentTab = "Map";
+
+                    main.appendChild(map);
+
+                    playWidth = map.clientWidth;
+                    playHeight = map.clientHeight;
+
+                    for (let i = 0; i < 9; i++) {
+                        let enemyDivMain = document.createElement("div");
+                        enemyDivMain.id = "enemyDivMain" + i;
+                        enemyDivMain.classList.add("enemyBorder");
+                        enemyDivMain.style.gridRow = gridOrder.rows[i] + "";
+                        enemyDivMain.style.gridColumn = gridOrder.columns[i] + "";
+
+                        if (i !== 4) {
+                            let enemy = document.createElement("div");
+                            enemy.id = enemies[i].name;
+                            enemy.style.width = "90px";
+                            enemy.style.height = "90px";
+                            enemy.style.position = "relative";
+                            enemy.style.left = enemyPos.left[i];
+                            enemy.style.top = enemyPos.top[i];
+                            enemy.style.rotate = rotates[i];
+                            enemy.style.borderRadius = "45%";
+
+                            theNoNoZone.push(
+                                {
+                                    id: enemies[i].name,
+                                    point1: [parseInt(enemyPos.left[i].replace("px", "")) / 100 * document.getElementById("mainGamePlayWindow").clientWidth, parseInt(enemyPos.left[i].replace("px", "")) / 100 * document.getElementById("mainGamePlayWindow").clientWidth + 90],
+                                    point2: [parseInt(enemyPos.top[i].replace("px", "")) / 100 * document.getElementById("mainGamePlayWindow").clientHeight, parseInt(enemyPos.top[i].replace("px", "")) / 100 * document.getElementById("mainGamePlayWindow").clientHeight + 90]
+                                }
+                            );
+
+                            if (enemies[i].bossDefeated) {
+                                enemy.style.backgroundColor = "gray";
+                            } else {
+                                enemy.style.backgroundColor = enemies[i].color;
+                            }
+
+                            enemy.onmouseover = function () {
+                                if (!enemies[i].bossDefeated && !enemies[i].children.defeatedList.includes(false)) {
+                                    enemy.style.backgroundColor = "#" + (parseInt(enemies[i].color.substring(1), 16) - 100 % 0xFFFFFF).toString(16);
+                                } else if (enemies[i].bossDefeated) {
+                                    enemy.style.backgroundColor = "gray";
+                                } else {
+                                    enemy.style.backgroundColor = enemies[i].color;
+                                }
+                            }
+
+                            enemy.onmouseout = function () {
+                                if (!enemies[i].bossDefeated) {
+                                    enemy.style.backgroundColor = enemies[i].color;
+                                } else {
+                                    enemy.style.backgroundColor = "gray";
+                                }
+                            }
+
+                            enemy.onclick = function () {
+                                if (!enemies[i].bossDefeated) {
+                                    if (!enemies[i].children.defeatedList.includes(false)) {
+                                        currentOpponent = enemy.id;
+                                        isBossFight = true;
+                                        showTab('Battle');
+                                    }
+                                }
+                            }
+
+                            let text = document.createElement("p");
+                            text.innerHTML = enemies[i].name;
+                            text.style.position = "relative";
+                            text.style.textAlign = "center";
+                            text.style.wordWrap = "word-break";
+                            text.style.width = "98%";
+                            text.style.top = (20 - (enemies[i].name.length / 11)) + "%";
+
+                            enemy.appendChild(text);
+                            enemyDivMain.appendChild(enemy);
+                        }
+                        else {
+                            let div = document.createElement("div");
+                            div.id = "playerDiv";
+                            div.style.width = "100px";
+                            div.style.height = "100px";
+                            div.style.position = "relative";
+                            div.style.textAlign = "center";
+                            div.style.left = "130%";
+                            div.style.top = "20%";
+                            div.innerHTML = "Player";
+                            div.style.gridRow = "1 / span 31";
+                            div.style.gridColumn = "1 / span 31";
+                            div.style.backgroundColor = "blue";
+                            div.style.border = "dashed gold 4px";
+
+                            enemyDivMain.appendChild(div);
+                        }
+
+                        map.appendChild(enemyDivMain);
+                    }
+
+                    for(let i = 0; i < 9; i++) {
+                        if (i !== 4) {
+                            let enemyLeft = parseInt(document.getElementById("enemyDivMain" + i).childNodes.item(0).style.left.replace("%", "")) / 100 * document.getElementById("mainGamePlayWindow").clientWidth
+                            let enemyTop = parseInt(document.getElementById("enemyDivMain" + i).childNodes.item(0).style.top.replace("%", "")) / 100 * document.getElementById("mainGamePlayWindow").clientHeight
+
+                            let leftRange = [enemyLeft + 50, enemyLeft + document.getElementById("mainGamePlayWindow").clientWidth * 0.20];
+                            let topRange = [enemyTop + 50, enemyTop + document.getElementById("mainGamePlayWindow").clientHeight * 0.30];
+
+                            for (let j = 0; j < enemies[i].numberOfChildren; j++) {
+                                let size = enemies[i].children.sizes[j];
+                                let enemyChild = document.createElement("div");
+                                enemyChild.id = enemies[i].name + "-" + j;
+                                enemyChild.classList.add("circle");
+                                enemyChild.style.width = size + "px";
+                                enemyChild.style.height = size + "px";
+
+                                switch (i) {
+                                    case 0:
+                                        checkForExistingEnemy(getRandomInt(leftRange[0], leftRange[1]), getRandomInt(topRange[0], topRange[1]), size, leftRange, topRange, enemyChild)
+                                        break;
+                                    case 1:
+                                        topRange = [document.getElementById("mainGamePlayWindow").clientHeight * 0.50, document.getElementById("mainGamePlayWindow").clientHeight * 0.70];
+                                        checkForExistingEnemy(getRandomInt(leftRange[0], leftRange[1]), getRandomInt(topRange[0], topRange[1]), size, leftRange, topRange, enemyChild)
+                                        break;
+                                    case 2:
+                                        topRange = [document.getElementById("mainGamePlayWindow").clientHeight * 0.80, document.getElementById("mainGamePlayWindow").clientHeight];
+                                        checkForExistingEnemy(getRandomInt(leftRange[0], leftRange[1]), getRandomInt(topRange[0], topRange[1]), size, leftRange, topRange, enemyChild)
+                                        break;
+                                    case 3:
+                                        leftRange = [document.getElementById("mainGamePlayWindow").clientWidth * 0.35, document.getElementById("mainGamePlayWindow").clientWidth * 0.50];
+                                        topRange = [document.getElementById("mainGamePlayWindow").clientHeight * 0.30, document.getElementById("mainGamePlayWindow").clientHeight * 0.50];
+                                        checkForExistingEnemy(getRandomInt(leftRange[0], leftRange[1]), getRandomInt(topRange[0], topRange[1]), size, leftRange, topRange, enemyChild)
+                                        break;
+                                    case 5:
+                                        leftRange = [document.getElementById("mainGamePlayWindow").clientWidth * 0.38, document.getElementById("mainGamePlayWindow").clientWidth * 0.50];
+                                        topRange = [document.getElementById("mainGamePlayWindow").clientHeight * 0.70, document.getElementById("mainGamePlayWindow").clientHeight * 0.80];
+                                        checkForExistingEnemy(getRandomInt(leftRange[0], leftRange[1]), getRandomInt(topRange[0], topRange[1]), size, leftRange, topRange, enemyChild)
+                                        break;
+                                    case 6:
+                                        leftRange = [document.getElementById("mainGamePlayWindow").clientWidth * 0.65, document.getElementById("mainGamePlayWindow").clientWidth * 0.80];
+                                        topRange = [document.getElementById("mainGamePlayWindow").clientHeight * 0.20, document.getElementById("mainGamePlayWindow").clientHeight * 0.40];
+                                        checkForExistingEnemy(getRandomInt(leftRange[0], leftRange[1]), getRandomInt(topRange[0], topRange[1]), size, leftRange, topRange, enemyChild)
+                                        break;
+                                    case 7:
+                                        leftRange = [document.getElementById("mainGamePlayWindow").clientWidth * 0.70, document.getElementById("mainGamePlayWindow").clientWidth * 0.85];
+                                        topRange = [document.getElementById("mainGamePlayWindow").clientHeight * 0.50, document.getElementById("mainGamePlayWindow").clientHeight * 0.70];
+                                        checkForExistingEnemy(getRandomInt(leftRange[0], leftRange[1]), getRandomInt(topRange[0], topRange[1]), size, leftRange, topRange, enemyChild)
+                                        break;
+                                    case 8:
+                                        leftRange = [document.getElementById("mainGamePlayWindow").clientWidth * 0.65, document.getElementById("mainGamePlayWindow").clientWidth * 0.80];
+                                        topRange = [document.getElementById("mainGamePlayWindow").clientHeight * 0.80, document.getElementById("mainGamePlayWindow").clientHeight];
+                                        checkForExistingEnemy(getRandomInt(leftRange[0], leftRange[1]), getRandomInt(topRange[0], topRange[1]), size, leftRange, topRange, enemyChild)
+                                        break;
+
+                                }
+
+                                if (enemies[i].children.defeatedList[j]) {
+                                    enemyChild.style.backgroundColor = "gray";
+                                } else {
+                                    enemyChild.style.backgroundColor = enemies[i].color;
+                                }
+
+                                enemyChild.onmouseover = function () {
+                                    if (!enemies[i].children.defeatedList[j]) {
+                                        enemyChild.style.backgroundColor = "#" + (parseInt(enemies[i].color.substring(1), 16) - 100 % 0xFFFFFF).toString(16);
+                                    }
+                                }
+
+                                enemyChild.onmouseout = function () {
+                                    if (!enemies[i].children.defeatedList[j]) {
+                                        enemyChild.style.backgroundColor = enemies[i].color;
+                                    }
+                                }
+
+                                enemyChild.onclick = function () {
+                                    if (!enemies[i].children.defeatedList[j]) {
+                                        isBossFight = false;
+                                        currentOpponent = enemyChild.id;
+                                        showTab('Battle');
+                                    }
+                                }
+                                document.getElementById("enemyDivMain" + i).appendChild(enemyChild);
+                            }
+                        }
+                    }
+                    currentTab = "Map";
+                    break;
+
+                case "Units":
+                    if(currentTab === "Battle") {
+                        currentIntervals.forEach(x => clearInterval(x));
+                        currentIntervals = [];
+                    }
+
+                    for(let i = 1 ; i < 9; i++) {
+                        document.getElementById("unit"+i).onclick = () => {
+                            selectedUnitDiv = i;
+                        } 
+                    }
+
+                    document.getElementById("equipButton").style.visibility = "visible";
+                    document.getElementById("removeButton").style.visibility = "visible";
+                    document.getElementById("waveChargeDiv").style.visibility = "hidden";
+
+                    document.getElementById("battleButton").style.backgroundColor = "rgba(33, 88, 122, 0.8)";
+                    let units = document.createElement("div");
+                    units.classList.add("unitsDiv");
+                    units.id = "unitsDiv";
+                    units.style.backgroundColor = "rgba(80, 80, 86, 0.8)";
+
+                    currentTab = "Units";
+
+                    let leftSideUnitsDiv = document.createElement("div");
+                    leftSideUnitsDiv.style.position = "relative";
+                    leftSideUnitsDiv.style.float = "left";
+                    leftSideUnitsDiv.style.width = "70%";
+                    leftSideUnitsDiv.style.height = "99%";
+                    leftSideUnitsDiv.style.border = "solid black 4px";
+                    leftSideUnitsDiv.style.backgroundColor = "rgba(80, 80, 86, 0.8)";
+                    leftSideUnitsDiv.style.overflowY = "scroll";
+
+                    for(let i = 0; i < 32; i++) {
+                        let unitDiv = document.createElement("div");
+                        unitDiv.id = i;
+                        unitDiv.style.position = "relative";
+                        unitDiv.style.float = "left";
+                        unitDiv.style.margin = "2% 1% 0 4%";
+                        unitDiv.style.width = "12%";
+                        unitDiv.style.height = "16%";
+                        unitDiv.style.border = "black solid 2px";
+                        unitDiv.style.borderRadius = "10%";
+
+                        let name = document.createElement("div");
+                        name.innerHTML = unitList[i].name;
+                        name.style.marginLeft = "5%";
+                        name.style.textOverflow = "ellipsis"
+                        name.style.overflow = "hidden";
+                        name.style.width = "90%";
+                        name.style.height = "30%";
+                        name.style.textAlign = "center";
+                        name.style.float = "left";
+
+                        let unitCanvas = document.createElement("canvas");
+                        unitCanvas.id = i +"div";
+                        unitCanvas.style.position = "relative";
+                        unitCanvas.style.float = "left";
+                        unitCanvas.style.width = "70%";
+                        unitCanvas.style.marginLeft = "15%";
+                        unitCanvas.style.height = "70%";
+
+                        drawGuy(unitCanvas, unitDiv.id);
+
+                        unitDiv.onmouseover = function () {
+                            unitDiv.style.backgroundColor = "rgba(89, 89, 89, 0.9)";
+                        }
+
+                        unitDiv.onmouseout = function () {
+                            unitDiv.style.backgroundColor = "rgba(80, 80, 86, 0.8)";
+                            for(let i = 0; i < 32; i++) {
+                                if (selectedUnitIndex === i) {
+                                    document.getElementById(i).style.backgroundColor = "rgba(102, 102, 102, 0.9)";
+                                }
+                                else {
+                                    document.getElementById(i).style.backgroundColor = "rgba(80, 80, 86, 0.8)";
+                                }
+                            }
+                        }
+
+                        unitDiv.onclick = function () {
+                            unitDiv.style.backgroundColor = "rgba(102, 102, 102, 0.9)";
+                            selectedUnitIndex = parseInt(unitDiv.id);
+                            for(let i = 0; i < 32; i++) {
+                                if (selectedUnitIndex === i) {
+                                    document.getElementById(i).style.backgroundColor = "rgba(102, 102, 102, 0.9)";
+                                }
+                                else {
+                                    document.getElementById(i).style.backgroundColor = "rgba(80, 80, 86, 0.8)";
+                                }
+                            }
+                            setUnitDisplayInfo();
+                        }
+                        unitDiv.appendChild(name);
+                        unitDiv.appendChild(unitCanvas);
+                        leftSideUnitsDiv.appendChild(unitDiv);
+                    }
+
+                    let unitInfoDisplayDiv = document.createElement("div");
+                    unitInfoDisplayDiv.style.position = "relative";
+                    unitInfoDisplayDiv.style.float = "left";
+                    unitInfoDisplayDiv.style.width = "28%";
+                    unitInfoDisplayDiv.style.height = "99%";
+                    unitInfoDisplayDiv.style.border = "solid black 4px";
+                    unitInfoDisplayDiv.style.backgroundColor = "rgba(30, 30, 30, 0.9)";
+
+                    let unitText = document.createElement("p")
+                    unitText.id = "unitText";
+                    unitText.style.margin = "10% 25% 10% 10%";
+                    unitText.style.textAlign = "center"
+                    unitText.style.fontSize= "32px";
+                    unitText.style.color = "lightgray";
+                    unitText.style.textOverflow = "ellipsis"
+                    unitText.style.overflow = "hidden";
+                    unitText.style.width = "80%";
+
+                    unitInfoDisplayDiv.appendChild(unitText);
+
+                    units.appendChild(leftSideUnitsDiv);
+                    units.appendChild(unitInfoDisplayDiv);
+                    main.appendChild(units);
+                    setUnitDisplayInfo();
+                    document.getElementById(selectedUnitIndex).style.backgroundColor = "rgba(102, 102, 102, 0.9)";
+
+                    currentTab = "Units";
+                    break;
+
+                case "Upgrades":
+                    if(currentTab === "Battle") {
+                        currentIntervals.forEach(x => clearInterval(x));
+                        currentIntervals = [];
+                    }
+
+                    document.getElementById("equipButton").style.visibility = "hidden";
+                    document.getElementById("removeButton").style.visibility = "hidden";
+                    document.getElementById("waveChargeDiv").style.visibility = "hidden";
+
+                    document.getElementById("battleButton").style.backgroundColor = "rgba(33, 88, 122, 0.8)";
+                    let upgrades = document.createElement("div");
+                    upgrades.classList.add("upgradesDiv");
+                    upgrades.id = "upgradesDiv";
+
+                    currentTab = "Upgrades";
+
+                    let leftSideUpgradesDiv = document.createElement("div");
+                    leftSideUpgradesDiv.style.position = "relative";
+                    leftSideUpgradesDiv.style.float = "left";
+                    leftSideUpgradesDiv.style.width = "25%";
+                    leftSideUpgradesDiv.style.height = "99%";
+                    leftSideUpgradesDiv.style.border = "solid black 4px";
+                    leftSideUpgradesDiv.style.backgroundColor = "rgba(80, 80, 86, 0.8)";
+                    leftSideUpgradesDiv.style.overflowY = "scroll";
+
+                    for(let i = 0; i < 32; i++) {
+                        let unitDiv = document.createElement("canvas");
+                        unitDiv.id = i;
+                        unitDiv.style.position = "relative";
+                        unitDiv.style.float = "left";
+                        unitDiv.style.margin = "5% 1% 0 4%";
+                        unitDiv.style.width = "16%";
+                        unitDiv.style.height = "12%";
+                        unitDiv.style.border = "black solid 2px";
+                        unitDiv.style.borderRadius = "10%";
+                        unitDiv.innerText = "test";
+
+                        drawGuy(unitDiv, unitDiv.id);
+
+                        unitDiv.onmouseover = function () {
+                            unitDiv.style.backgroundColor = "rgba(92, 92, 82, 0.8)";
+                        }
+
+                        unitDiv.onmouseout = function () {
+                            unitDiv.style.backgroundColor = "rgba(80, 80, 86, 0.8)";
+                            for(let i = 0; i < 32; i++) {
+                                if (selectedUnitIndex === i) {
+                                    document.getElementById(i).style.backgroundColor = "rgba(102, 102, 102, 0.9)";
+                                }
+                                else {
+                                    document.getElementById(i).style.backgroundColor = "rgba(80, 80, 86, 0.8)";
+                                }
+                            }
+                        }
+
+                        unitDiv.onclick = function () {
+                            unitDiv.style.backgroundColor = "rgba(104, 104, 104, 0.9)";
+                            selectedUnitIndex = parseInt(unitDiv.id);
+                            for(let i = 0; i < 32; i++) {
+                                if (selectedUnitIndex === i) {
+                                    document.getElementById(i).style.backgroundColor = "rgba(102, 102, 102, 0.9)";
+                                }
+                                else {
+                                    document.getElementById(i).style.backgroundColor = "rgba(80, 80, 86, 0.8)";
+                                }
+                            }
+                            showUpgradeTree(false);
+                        }
+
+                        leftSideUpgradesDiv.appendChild(unitDiv);
+                    }
+
+                    let unitDisplayDiv = document.createElement("div");
+                    unitDisplayDiv.style.position = "relative";
+                    unitDisplayDiv.style.float = "left";
+                    unitDisplayDiv.style.width = "73%";
+                    unitDisplayDiv.style.height = "99%";
+                    unitDisplayDiv.style.border = "solid black 4px";
+                    unitDisplayDiv.style.display = "flex";
+
+                    let unitUpgradeText = document.createElement("div")
+                    unitUpgradeText.id = "unitUpgradeText";
+                    unitUpgradeText.style.position = "relative";
+                    unitUpgradeText.style.marginTop = "0";
+                    unitUpgradeText.style.marginLeft = "0";
+                    unitUpgradeText.style.textAlign = "center";
+                    unitUpgradeText.style.width = "100%";
+                    unitUpgradeText.style.height = "99%";
+                    unitUpgradeText.style.backgroundColor = "green";
+                    unitDisplayDiv.style.float = "left";
+
+                    unitDisplayDiv.appendChild(unitUpgradeText);
+
+                    upgrades.appendChild(leftSideUpgradesDiv);
+                    upgrades.appendChild(unitDisplayDiv);
+
+                    main.appendChild(upgrades);
+
+                    unitUpgradeText.style.border = "darkgray inset 5px";
+                    showUpgradeTree(false);
+
+                    currentTab = "Upgrades";
+                    break;
+
+                case "Battle":
+                    currentTab = "Battle";
+                    isPlayingGame = true;
+
+                    document.getElementById("equipButton").style.visibility = "hidden";
+                    document.getElementById("removeButton").style.visibility = "hidden";
+                    document.getElementById("waveChargeDiv").style.visibility = "visible";
+
+                    document.getElementById("battleButton").style.backgroundColor = "rgba(50, 120, 122, 0.8)";
+
+                    let healthBarDiv1 = document.createElement("div");
+                    healthBarDiv1.style.position =  "absolute";
+                    healthBarDiv1.style.width =  "49%";
+                    healthBarDiv1.style.height = "16px";
+                    healthBarDiv1.style.border = "black solid 2px";
+                    healthBarDiv1.style.left = "0px";
+                    healthBarDiv1.style.top = "9.5%";
+                    healthBarDiv1.style.marginLeft = "1%";
+                    healthBarDiv1.style.backgroundColor = "burlywood";
+
+                    let healthBarDiv2 = document.createElement("div");
+                    healthBarDiv2.style.position =  "absolute";
+                    healthBarDiv2.style.width =  "49%";
+                    healthBarDiv2.style.height = "16px";
+                    healthBarDiv2.style.border = "black solid 2px";
+                    healthBarDiv2.style.left = "50%";
+                    healthBarDiv2.style.top = "9.5%";
+                    healthBarDiv2.style.backgroundColor = "burlywood";
+
+                    let healthBarDiv1Inner = document.createElement("div");
+                    healthBarDiv1Inner.id = "healthBar1";
+                    healthBarDiv1Inner.style.float = "right";
+                    healthBarDiv1Inner.style.width = "10%";
+                    healthBarDiv1Inner.style.height = "100%";
+                    healthBarDiv1Inner.style.backgroundColor = "blue";
+                    healthBarDiv1Inner.style.transition = "width 1s ease";
+
+                    let healthBarDiv2Inner = document.createElement("div");
+                    healthBarDiv2Inner.id = "healthBar2";
+                    healthBarDiv2Inner.style.width = "10%";
+                    healthBarDiv2Inner.style.height = "100%";
+                    healthBarDiv2Inner.style.backgroundColor = "red";
+                    healthBarDiv2Inner.style.transition = "width 1s ease";
+
+                    healthBarDiv1.appendChild(healthBarDiv1Inner);
+                    healthBarDiv2.appendChild(healthBarDiv2Inner);
+                    main.appendChild(healthBarDiv1);
+                    main.appendChild(healthBarDiv2);
+
+                    for(let i = 1; i < 9; i++) {
+                        let laneDiv = document.createElement("div");
+                        laneDiv.classList.add("laneDiv");
+                        laneDiv.id = "laneDiv" + i;
+
+                        if(i === 1) {
+                            laneDiv.style.backgroundColor = "rgba(83, 83, 83, 0.3)";
+                            main.focus();
+                        }
+                        main.appendChild(laneDiv);
+                    }
+
+                    let randomTime = Math.floor(Math.random() * 400) + 1000 - (10 * enemyDifficultyMultiplier);
+
+                    let x = setInterval(() => createGuyUnit(1, "left", 1, 0, true), randomTime);
+                    currentIntervals.push(x);
+
+                    break;
+            }
+        }
+
+        function isInRange(checkVal, range) {
+            let rangeLeft = range[0];
+            let rangeRight = range[1];
+
+            return checkVal >= rangeLeft && checkVal <= rangeRight
+        }
+
+        function equipUnit() {
+            let unit = unitList[selectedUnitIndex];
+            let listCheck = activeUnitList.filter(x => x.unitId === unit.id)
+
+            if(listCheck.length === 0) {
+                drawGuy("unit" +selectedUnitDiv, unit.id)
+            }
+        }
+
+        function checkForExistingEnemy(left, top, size, leftRange, topRange, enemyChild) {
+            let isValid = false;
+
+            let tmpCount = 0;
+
+            while(!isValid) {
+
+                if(tmpCount >= Number.MAX_SAFE_INTEGER - 1) {
+                    break;
+                }
+
+
+                let list = [];
+                for(let i = 0; i < theNoNoZone.length; i++) {
+                    if (isInRange(left, theNoNoZone[i].point1) || isInRange(left + size, theNoNoZone[i].point1)) {
+                        if (isInRange(top, theNoNoZone[i].point2) || isInRange(top + size, theNoNoZone[i].point2)) {
+                            if (theNoNoZone[i].id === enemyChild.id.substring(0, enemyChild.id.length - 2) || theNoNoZone[i].id.substring(0, theNoNoZone[i].id.length - 2) === enemyChild.id.substring(0, enemyChild.id.length - 2)) {
+                                list.push(theNoNoZone[i]);
+                            }
+                        }
+                    }
+                }
+
+                if(list.length === 0) {
+                    isValid = true;
+                    break;
+                }
+                else {
+                    tmpCount++;
+                    left = getRandomInt(leftRange[0], leftRange[1]);
+                    top = getRandomInt(topRange[0], topRange[1]);
+                }
+            }
+
+            let found = theNoNoZone.find(x => x.id === enemyChild.id)
+
+            if(!found) {
+                theNoNoZone.push({id: enemyChild.id, point1: [left, left + size], point2: [top, top + size]})
+            }
+
+            enemyChild.style.left = theNoNoZone.find(x => x.id === enemyChild.id).point1[0] + "px";
+            enemyChild.style.top = theNoNoZone.find(x => x.id === enemyChild.id).point2[0] + "px";
+        }
+
+        function changeSelector(ev) {
+            if(ev.key === "ArrowDown") {
+                if(selectedLane < 8) {
+                    selectedLane++;
+                }
+            }
+            else if(ev.key === "ArrowUp") {
+                if(selectedLane > 1) {
+                    selectedLane--;
+                }
+            }
+            else if(ev.key === "1") {
+                changeBackground('unit1', 'Click');
+            }
+            else if(ev.key === "2") {
+                changeBackground('unit2', 'Click');
+            }
+            else if(ev.key === "3") {
+                changeBackground('unit3', 'Click');
+            }
+            else if(ev.key === "4") {
+                changeBackground('unit4', 'Click');
+            }
+            else if(ev.key === "5") {
+                changeBackground('unit5', 'Click');
+            }
+            else if(ev.key === "6") {
+                changeBackground('unit6', 'Click');
+            }
+            else if(ev.key === "7") {
+                changeBackground('unit7', 'Click');
+            }
+            else if(ev.key === "8") {
+                changeBackground('unit8', 'Click');
+            }
+
+            document.getElementById("laneDiv" + selectedLane).style.backgroundColor = "rgba(83, 83, 83, 0.3)";
+
+            for(let i = 1; i < 9; i++) {
+                if(i !== selectedLane) {
+                    document.getElementById("laneDiv" + i).style.backgroundColor = "gray";
+                }
+            }
+        }
+
+        function createGuyWave() {
+            for(let i = 1; i < 9; i++) {
+                createGuyUnit(i, "right", 4, 0);
+            }
+        }
+
+        function setUnitDisplayInfo() {
+            document.getElementById("unitText").innerText =
+                    "Name: " + unitList[selectedUnitIndex].name + "\n" +
+                    "Attack: " + unitList[selectedUnitIndex].attack + "\n" +
+                    "Defence: " + unitList[selectedUnitIndex].defence + "\n" +
+                    "Special: "+ unitList[selectedUnitIndex].special+ "\n" +
+                    "Level: "+ unitList[selectedUnitIndex].upgradeLevel;
+        }
+
+        function showUpgradeTree(showClear) {
+            let canvas = document.getElementById("unitUpgradeText");
+
+
+                while (canvas.firstChild) {
+                    canvas.removeChild(canvas.firstChild);
+                }
+
+
+            for(let i = 0; i < 5; i++) {
+                let treePart = document.createElement("div");
+                treePart.id = "treePart-"+i;
+                treePart.style.width= "15%";
+                treePart.style.marginLeft = "4%";
+                treePart.style.height= "100%";
+                treePart.style.float = "left";
+                treePart.style.display = "flex";
+                treePart.style.flexDirection = "column";
+                treePart.style.justifyContent = "space-evenly";
+
+                canvas.appendChild(treePart);
+                let numPaths = upgradeTrees.trees[selectedUnitIndex].path[i];
+
+                for(let j = 0; j < numPaths; j++) {
+                    let upgradePath = document.createElement("div");
+                    upgradePath.style.width = "75px";
+                    upgradePath.style.height = "75px";
+                    upgradePath.style.backgroundColor = "purple";
+                    upgradePath.style.borderRadius = "50%";
+                    upgradePath.style.border= "black inset 2px";
+                    upgradePath.innerHTML = j;
+
+                    treePart.appendChild(upgradePath)
+                }
+
+            }
+        }
+
+        function winMatch() {
+            if(currentOpponent !== undefined) {
+                if(isBossFight) {
+                    let x = enemies.find(x => x.name === currentOpponent);
+                    x.bossDefeated = true;
+                }
+                else {
+                    let x = enemies.find(x => x.name === currentOpponent.slice(0, -2));
+                    let index = x.children.names.findIndex(x => x === currentOpponent);
+                    x.children.defeatedList[index] = true;
+                }
+                showTab('Map');
+            }
+        }
+
+        function createGuyUnit(overrideLane, direction, speed, unitId, enemy = false) {
+
+           if(enemy) {
+               overrideLane = Math.floor(Math.random() * 7) + 1;
+           }
+
+           if (document.hasFocus()) {
+               let guy = document.createElement("canvas");
+               guy.id = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString();
+               guy.style.width = "30px";
+               guy.style.height = "30px";
+               guy.style.position = "absolute";
+               guy.style.marginTop = "1%";
+
+               if(direction==="right"){
+                   guy.style.left = "0px";
+               }
+               else {
+                   guy.style.left = document.getElementById("mainGamePlayWindow").clientWidth + "px";
+               }
+
+               if(enemy) {
+                   guy.id += "bad";
+                   drawGuy(guy, unitId);
+               }
+               else {
+                   guy.id +="good";
+                   drawGuy(guy, unitId);
+               }
+
+               let selectedRow = "laneDiv" + selectedLane;
+
+               if(overrideLane !== undefined) {
+                   selectedRow = "laneDiv" + overrideLane;
+               }
+
+               let grid = document.getElementById(selectedRow);
+               grid.appendChild(guy);
+
+               currentUnitList.push({id:guy.id, lane: overrideLane !== undefined ? overrideLane : selectedLane, health: 3, damage: 5});
+
+               let interval = setInterval(() => {
+
+                   if (document.hasFocus()) {
+                       if (direction === "right") {
+                           guy.style.left = (parseInt(guy.style.left.replace("px", "")) + 3) + "px";
+                       } else {
+                           guy.style.left = (parseInt(guy.style.left.replace("px", "")) - 3) + "px";
+                       }
+
+                       if (parseInt(guy.style.left.replace("px", "")) > document.getElementById("mainGamePlayWindow").clientWidth + 10 ||
+                           parseInt(guy.style.left.replace("px", "")) < -10
+                       ) {
+                           if(document.getElementById(guy.id)) {
+                               if (guy.id.substring(guy.id.length - 3) === "bad") {
+                                   document.getElementById("healthBar1").style.width = (parseInt(document.getElementById("healthBar1").style.width.replace("%", "")) - 2.5) + "%";
+                                   document.getElementById("healthBar2").style.width = (parseInt(document.getElementById("healthBar2").style.width.replace("%", "")) + 2.5) + "%";
+
+                                   if (document.getElementById("healthBar1").style.width < 0) {
+                                       document.getElementById("healthBar2").style.width = "0%";
+                                   }
+                                   if (document.getElementById("healthBar2").style.width > 100) {
+                                       document.getElementById("healthBar2").style.width = "100%";
+                                   }
+                               } else {
+                                   document.getElementById("healthBar2").style.width = (parseInt(document.getElementById("healthBar2").style.width.replace("%", "")) - 2.5) + "%";
+                                   document.getElementById("healthBar1").style.width = (parseInt(document.getElementById("healthBar1").style.width.replace("%", "")) + 2.5) + "%";
+
+                                   if (document.getElementById("healthBar2").style.width < 0) {
+                                       document.getElementById("healthBar2").style.width = "0%";
+                                   }
+                                   if (document.getElementById("healthBar1").style.width > 100) {
+                                       document.getElementById("healthBar2").style.width = "100%";
+                                   }
+                               }
+
+                               document.getElementById(guy.id).remove();
+                               currentUnitList.splice(currentUnitList.findIndex(x => x.id === guy.id), 1);
+                           }
+                       }
+
+                       let distances = [];
+
+                       for (let j = 0; j < grid.children.length; j++) {
+                           distances.push({
+                               id: grid.childNodes.item(j).id,
+                               distance: grid.childNodes.item(j).style.left,
+                               lane: grid.id
+                           });
+                       }
+
+                       let dupes = toFindDuplicates(distances);
+
+                       for (let i = 0; i < dupes.length; i++) {
+                           let match = dupes[i];
+
+                           if (match.id.substring(match.id.length - 3) === "bad") {
+                               document.getElementById(match.id).style.left = (parseInt(document.getElementById(match.id).style.left.replace("px", "")) + 30) + "px";
+                               let unit = currentUnitList.find(x => x.id === document.getElementById(match.id).id)
+                               unit.health -= 1;
+
+                               if (unit.health <= 0) {
+                                   grid.removeChild(document.getElementById(match.id));
+                                   currentUnitList.splice(currentUnitList.findIndex(x => x.id === match.id), 1);
+                               }
+
+                           } else {
+                               document.getElementById(match.id).style.left = (parseInt(document.getElementById(match.id).style.left.replace("px", "")) - 30) + "px";
+                               let unit = currentUnitList.find(x => x.id === document.getElementById(match.id).id)
+                               unit.health -= 1;
+
+                               if (unit.health <= 0) {
+                                   grid.removeChild(document.getElementById(match.id));
+                                   currentUnitList.splice(currentUnitList.findIndex(x => x.id === match.id), 1);
+                               }
+                           }
+                       }
+
+                       if (currentUnitList.includes({id: guy.id, lane: overrideLane !== undefined ? overrideLane : selectedLane, health: 0})) {
+                           grid.removeChild(document.getElementById(guy.id));
+                       }
+
+                       if(parseInt(document.getElementById("healthBar2").style.width.replace("%", "")) >= 100) {
+                           clearInterval(interval);
+                           showTab('Map');
+                       }
+                       else if (parseInt(document.getElementById("healthBar1").style.width.replace("%", "")) >= 100) {
+                           clearInterval(interval)
+                           winMatch();
+                       }
+                   }
+               }, 17);
+               currentIntervals.push(interval);
+           }
+       }
+
+    function toFindDuplicates(arry) {
+       let uniqueElements = [];
+       arry.forEach(x => {
+           for(let i = 0; i < arry.length; i++) {
+               if(i === 0) {
+                   uniqueElements.push(x)
+               }
+               else if(i !== x) {
+                   if(isInRange(
+                        parseInt(uniqueElements[0].distance.replace("px","")), 
+                        [
+                            parseInt(arry[i].distance.replace("px", "")) - 5, 
+                            parseInt(arry[i].distance.replace("px", "")) + 5
+                        ]
+                    ) &&
+                      uniqueElements[0].lane === arry[i].lane &&
+                      uniqueElements[0].id.substring(uniqueElements[0].id.length - 3) !== arry[i].id.substring(arry[i].id.length - 3)
+                   ) {
+                       uniqueElements.push(x);
+                       return uniqueElements;
+                   }
+
+                   if (uniqueElements.length === 2) { return uniqueElements;}
+               }
+           }
+           while(uniqueElements.length !== 0) { uniqueElements.pop(); }
+       });
+
+       if(uniqueElements.length > 2) {
+           let minEnemy = document.getElementById("mainGamePlayWindow").clientWidth;
+           let minPlayer = 0;
+           let enemyIndex = 0;
+           let playerIndex = 0;
+
+           for(let i = 0; i < uniqueElements.length; i++) {
+               if (uniqueElements[i].id.substring(uniqueElements[i].id.length - 3) === "bad") {
+                   if (parseInt(uniqueElements[i].distance.replace("px", "")) < minEnemy) {
+                       minEnemy = uniqueElements[i].distance.replace("px", "");
+                       enemyIndex = i;
+                   }
+               }
+               else {
+                   if (parseInt(uniqueElements[i].distance.replace("px", "")) > minPlayer) {
+                       minPlayer = uniqueElements[i].distance.replace("px", "");
+                       playerIndex = i;
+                   }
+               }
+           }
+           uniqueElements = [uniqueElements[enemyIndex], uniqueElements[playerIndex]];
+       }
+
+       return uniqueElements;
+   }
+
+   </script>
+   <style>
+       .circle {
+           position: absolute;
+           border: 2px solid #000000;
+           border-radius: 50%;
+           font-size: 32px;
+       }
+
+       body {
+           overflow: hidden;
+           background-color: rgba(25, 15, 50, 0.8);
+       }
+
+       a {
+           text-decoration:none;
+       }
+
+       .gameButton {
+           position: relative;
+           width: 20%;
+           height: 50px;
+           background-color: rgba(45, 65, 90, 0.8);
+           border-radius: 15px;
+           border: black solid 2px;
+           font-size: 34px;
+       }
+
+       .gameButton:hover {
+           background-color: pink;
+       }
+
+       .gameButtonText {
+           position: relative;
+           text-align: center;
+           top: 15%;
+       }
+	   
+	   .gameButtonEquip {
+           width: 20%;
+           height: 50px;
+           background-color: rgba(45, 65, 90, 0.8);
+           border-radius: 15px;
+           border: black solid 2px;
+           font-size: 26px;
+		   text-align: center;
+       }
+
+       .gameButtonEquip:hover {
+           background-color: pink;
+       }
+
+       .mainGameWindow {
+           height: 95%;
+           width: 99%;
+           border: black solid 3px;
+           background-color: lightgray;
+           position: absolute;
+           left: 5px;
+           bottom: 2.5%;
+           visibility: hidden;
+           display: flex;
+           flex-direction: column;
+       }
+
+       .loadGameWindow {
+           height: 90%;
+           width: 99%;
+           border: black solid 3px;
+           background-color: rgba(35, 50, 70, 0.9);
+           position: absolute;
+           left: 5px;
+           bottom: 5%;
+           visibility: hidden;
+           display: flex;
+       }
+
+       .loadGameWindowLeftSide {
+           display: flex;
+           flex-direction: column;
+           width: 40%;
+           height: 90%;
+           margin-top: 2%;
+       }
+
+       .loadGameWindowRightSide {
+           display: flex;
+           flex-direction: column;
+           width: 40%;
+           height: 90%;
+           margin-top: 2%;
+       }
+
+       .loadGameTextArea {
+           border: 3px solid lightgray;
+           width: 95%;
+           height: 50%;
+           position: relative;
+           margin-left: 2.5%;
+           padding-left: 5px;
+           padding-top: 5px;
+           background-color: rgba(33, 88, 122, 0.8);
+           border-radius: 10px;
+           color: lightgray;
+           overflow-y: scroll;
+       }
+
+       .loadGameTextArea::-webkit-scrollbar {
+           display:none;
+       }
+
+       .buttonDisabled {
+           background-color: rgba(160, 170, 175, 0.8);
+           pointer-events: none;
+           width: 150px;
+           height: 50px;
+           border-radius: 10px;
+           border: black solid 2px;
+           text-align: center;
+           position: relative;
+           top:100%
+       }
+
+       .backButton {
+           margin-left: 25px;
+           margin-top: 25px;
+           width: 100px;
+           height: 35px;
+           border-radius: 10px;
+           border: black solid 2px;
+           background-color: rgba(33, 88, 122, 0.8);
+           text-align: center;
+       }
+
+       .startButton {
+           width: 150px;
+           height: 50px;
+           border-radius: 10px;
+           border: black solid 2px;
+           background-color: rgba(33, 88, 122, 0.8);
+           text-align: center;
+           position: relative;
+           top:100%;
+       }
+
+       .startButton:hover {
+           background-color: rgba(50, 120, 122, 0.8);
+       }
+
+       .backButton:hover {
+           background-color: rgba(50, 120, 122, 0.8);
+       }
+
+       .headerButton:hover {
+           background-color: rgba(50, 120, 122, 0.8);
+       }
+
+       .headerButton {
+           width: 20%;
+           height: 95%;
+           border: black solid 2px;
+           border-radius: 0 0 10px 10px;
+           background-color: rgba(33, 88, 122, 0.8);
+           text-align: center;
+       }
+
+       .dropZone {
+           border: 3px solid lightgray;;
+           border-radius: 10px;
+           width: 95%;
+           height: 50%;
+           background-color: rgba(33, 88, 122, 0.8);
+       }
+
+       .mainTabsAndButtons {
+           display: flex;
+           width: 100%;
+           height: 10%;
+           justify-content: space-evenly;
+           background-color: lightgray;
+       }
+
+       .mainGamePlayWindow {
+           display: flex;
+           flex-direction: column;
+           justify-content: space-evenly;
+           margin-top: 1%;
+           margin-bottom: 1%;
+           margin-left: 1%;
+           height: 78%;
+           width: 98%;
+           background-color: gray;
+       }
+
+       .mainUnitSelections {
+           display: flex;
+           width: 100%;
+           height: 10%;
+           justify-content: space-evenly;
+       }
+
+       .laneDiv {
+           width: 100%;
+           height: 12%;
+           margin-bottom: 2px;
+       }
+
+       .mapDiv {
+           width: 100%;
+           height: 100%;
+           border: black solid 2px;
+           display: grid;
+           grid-template-columns: repeat(32, 1fr);
+           grid-template-rows: repeat(32, 1fr);
+           background-color: peachpuff;
+       }
+
+       .unitsDiv {
+           width: 100%;
+           height: 100%;
+       }
+
+       .upgradesDiv {
+           width: 100%;
+           height: 100%;
+       }
+
+       .enemyBorder {
+           width: 100%;
+           height: 100%;
+       }
+
+       .unitDiv {
+           width: 12.5%;
+           border: solid black 1px;
+           display: flex;
+           flex-direction: column;
+           background-color: gray;
+       }
+
+       @keyframes unitDivAnimate {
+           0% { filter: blur(20px)}
+           100% {filter: blur(0px)}
+       }
+
+       .unitCanvas {
+           width: 75%;
+           height: 75%;
+           background-color: peachpuff;
+           margin: -10% auto auto;
+       }
+
+       .unitHolder {
+           width: 75%;
+           height: 4px;
+           background-color: darkgray;
+           border: solid 2px darkslategray;
+           border-radius: 2px;
+           margin: auto;
+       }
+
+   </style>
+</head>
+<body>
+    <div class="MainWindow" style="width: 98vw; height: 98vh;">
+        <!-- Start Menu Section-->
+        <h1 style="text-align: center; font-size: 52px;" id="mainTitle">Warlords 2.0</h1>
+
+        <div
+            class="gameButton"
+            id="newGameButton"
+            style="left: 40%; top: 30%;"
+            onclick="clearStartMenuAndShowMainWindow()"
+        ><div id="newGameButtonText" class="gameButtonText">New Game</div>
+        </div>
+
+        <div
+            class="gameButton"
+            id="loadGameButton"
+            style="left: 40%; top: 40%;"
+            onclick="clearStartMenuAndShowLoadWindow()"
+        ><div id="loadGameButtonText" class="gameButtonText">Load Game</div>
+        </div>
+
+        <!-- Main Game Window -->
+        <div class="mainGameWindow" id="mainGameWindow">
+
+            <!-- Tabs up top -->
+            <div class="mainTabsAndButtons">
+                <div class="headerButton" onclick="showTab('Map')"><h1 style="line-height: 10%;">Map</h1></div>
+                <div class="headerButton" onclick="showTab('Units')"><h1 style="line-height: 10%;">Units</h1></div>
+                <div class="headerButton" onclick="showTab('Upgrades')"><h1 style="line-height: 10%;">Upgrades</h1></div>
+                <div class="headerButton" id="battleButton"><h1 style="line-height: 10%;">Battle</h1></div>
+                <a class="headerButton" id="downloadAnchorElem" onclick="exportSaveFile()"><h1 style="line-height: 10%;">Export</h1></a>
+            </div>
+
+            <!-- Main play screen -->
+            <div class="mainGamePlayWindow" id="mainGamePlayWindow" onkeydown="changeSelector(event)" tabindex="-1"></div>
+
+            <!-- Unit Selector -->
+            <div class="mainUnitSelections" style="background-color: lightgray">
+                <div id="units" style="width: 50%; margin-left: 1%; display: flex; justify-content: space-evenly; margin-bottom: 2px">
+                    <div
+                        id="unit1"
+                        class="unitDiv"
+                        onmouseover="changeBackground('unit1','Over')"
+                        onmouseout="changeBackground('unit1', 'Out')"
+                        onmousedown="changeBackground('unit1', 'Click')"
+                        onmouseup="changeBackground('unit1', 'ClickEnd')"
+                        tabindex="-1"
+                    >1
+                        <canvas id="unit1Canvas" class="unitCanvas"></canvas>
+                        <div id="unit1Holder" class="unitHolder"></div>
+                    </div>
+                    <div
+                        id="unit2"
+                        class="unitDiv"
+                        onmouseover="changeBackground('unit2','Over')"
+                        onmouseout="changeBackground('unit2', 'Out')"
+                        onmousedown="changeBackground('unit2', 'Click')"
+                        onmouseup="changeBackground('unit2', 'ClickEnd')"
+                    >2
+                        <canvas id="unit2Canvas" class="unitCanvas"></canvas>
+                        <div id="unit2Holder" class="unitHolder"></div>
+                    </div>
+                    <div
+                        id="unit3"
+                        class="unitDiv"
+                        onmouseover="changeBackground('unit3','Over')"
+                        onmouseout="changeBackground('unit3', 'Out')"
+                        onmousedown="changeBackground('unit3', 'Click')"
+                        onmouseup="changeBackground('unit3', 'ClickEnd')"
+                    >3
+                        <canvas id="unit3Canvas" class="unitCanvas"></canvas>
+                        <div id="unit3Holder" class="unitHolder"></div>
+                    </div>
+                    <div
+                        id="unit4"
+                        class="unitDiv"
+                        onmouseover="changeBackground('unit4','Over')"
+                        onmouseout="changeBackground('unit4', 'Out')"
+                        onmousedown="changeBackground('unit4', 'Click')"
+                        onmouseup="changeBackground('unit4', 'ClickEnd')"
+                    >4
+                        <canvas id="unit4Canvas" class="unitCanvas"></canvas>
+                        <div id="unit4Holder" class="unitHolder"></div>
+                    </div>
+                    <div
+                        id="unit5"
+                        class="unitDiv"
+                        onmouseover="changeBackground('unit5','Over')"
+                        onmouseout="changeBackground('unit5', 'Out')"
+                        onmousedown="changeBackground('unit5', 'Click')"
+                        onmouseup="changeBackground('unit5', 'ClickEnd')"
+                    >5
+                        <canvas id="unit5Canvas" class="unitCanvas"></canvas>
+                        <div id="unit5Holder" class="unitHolder"></div>
+                    </div>
+                    <div
+                        id="unit6"
+                        class="unitDiv"
+                        onmouseover="changeBackground('unit6','Over')"
+                        onmouseout="changeBackground('unit6', 'Out')"
+                        onmousedown="changeBackground('unit6', 'Click')"
+                        onmouseup="changeBackground('unit6', 'ClickEnd')"
+                    >6
+                        <canvas id="unit6Canvas" class="unitCanvas"></canvas>
+                        <div id="unit6Holder" class="unitHolder"></div>
+                    </div>
+                    <div
+                        id="unit7"
+                        class="unitDiv"
+                        onmouseover="changeBackground('unit7','Over')"
+                        onmouseout="changeBackground('unit7', 'Out')"
+                        onmousedown="changeBackground('unit7', 'Click')"
+                        onmouseup="changeBackground('unit7', 'ClickEnd')"
+                    >7
+                        <canvas id="unit7Canvas" class="unitCanvas"></canvas>
+                        <div id="unit7Holder" class="unitHolder"></div>
+                    </div>
+                    <div
+                        id="unit8"
+                        class="unitDiv"
+                        onmouseover="changeBackground('unit8','Over')"
+                        onmouseout="changeBackground('unit8', 'Out')"
+                        onmousedown="changeBackground('unit8', 'Click')"
+                        onmouseup="changeBackground('unit8', 'ClickEnd')"
+                    >8
+                        <canvas id="unit8Canvas" class="unitCanvas"></canvas>
+                        <div id="unit8Holder" class="unitHolder"></div>
+                    </div>
+                </div>
+                <div id="waveChargeDiv" style="width:24%; margin-right: 1%; margin-left: 1%; display: flex; flex-direction: column;">
+                    <h4 style ="width: 98%; margin-left: 1%; margin-top: -2%; height: 10%; text-align: center">Wave Charge</h4>
+                    <div style="width:98%; margin-left: 1%; margin-top: -2%; height: 60%; border: 2px black solid; background-color: darksalmon; border-radius: 50px 50px 50px 50px">
+                        <div id="waveChargeBarInner" style="width: 0%; max-width: 100%; height: 100%; background-color: darkolivegreen; border-radius: 50px 50px 50px 50px; position: relative; left: 50%; transition: ease 0.25s"></div>
+                    </div>
+                </div>
+                <div style="width:25%; margin-left: 1%; margin-right: 1%; display:flex; justify-content: space-evenly">
+                    <button id="equipButton" class="gameButtonEquip" style="width:40%;">Equip</button>
+                    <button id="removeButton" class="gameButtonEquip" style="width:40%;">Remove</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Load Game Window -->
+        <div class="loadGameWindow" id="loadGameWindow">
+            <div class="backButton" onclick="showStartMenu()"><h2 style="margin-top:5px;">Back</h2></div>
+
+            <!-- Paste Window -->
+            <div class="loadGameWindowLeftSide">
+                <h2 style="text-align:center;">Paste Save File Here</h2>
+                <label for="loadGameTextArea"></label><textarea
+                    id="loadGameTextArea"
+                    class="loadGameTextArea"
+                    oninput="loadUserDataFromText()"
+            ></textarea>
+            </div>
+
+            <!-- Middle Button -->
+            <div style="text-align: center; width: 10%; height: 55%;">
+                <h1 style="text-align:center;">Or</h1>
+                <div id="startButton" class="buttonDisabled" onclick="activateStartGameButton()"><h1 style="margin-top:5px;">Start</h1></div>
+            </div>
+
+            <!-- Drag N' Drop Window -->
+            <div class="loadGameWindowRightSide">
+                <h2 style="text-align:center;">Upload</h2>
+                <div
+                        id="dropZone"
+                        class="dropZone"
+                        ondrop="dropHandler(event);"
+                        ondragover="dragOverHandler(event);"
+                        ondragleave="dragOverLeaveHandler(event);"
+                >
+                    <h2 style="text-align:center;">Drag save file here</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
